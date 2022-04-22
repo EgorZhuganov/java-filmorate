@@ -50,10 +50,9 @@ public class UserController {
 
     @DeleteMapping("/{id}") //204 no content
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public boolean remove(@PathVariable Long id) {
+    public void remove(@PathVariable Long id) {
         if (!userService.delete(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return true;
     }
 }
