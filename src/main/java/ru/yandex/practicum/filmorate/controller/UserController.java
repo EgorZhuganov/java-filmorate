@@ -39,7 +39,7 @@ public class UserController {
         return userService.create(user);
     }
 
-    @PutMapping //204 no content
+    @PutMapping //200 OK orElseThrow NOT_FOUND
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserReadDto update(@RequestBody UserUpdateDto user) {
