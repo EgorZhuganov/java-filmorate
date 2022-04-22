@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.filmorate.mapper.userMapper.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
@@ -17,6 +19,7 @@ import static java.util.stream.Collectors.*;
 
 @Service
 //@Transactional(readOnly = true)
+@Validated
 public class UserService {
 
     private final AbstractRepository<Long, User> userRepository;
@@ -42,7 +45,7 @@ public class UserService {
     }
 
     //@Transactional
-    public UserReadDto create(UserCreateDto userCreateDto) {
+    public UserReadDto create(@Valid UserCreateDto userCreateDto) {
         var userCreateMapper = (UserCreateMapper) mapper.get(UserCreateMapper.class.getName());
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         return Optional.of(userCreateDto)
@@ -53,7 +56,7 @@ public class UserService {
     }
 
     //@Transactional
-    public Optional<UserReadDto> update(Long id, UserUpdateDto userUpdateDto) {
+    public Optional<UserReadDto> update(Long id, @Valid UserUpdateDto userUpdateDto) {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         var userUpdateMapper = (UserUpdateMapper) mapper.get(UserUpdateMapper.class.getName());
         return userRepository.findById(id)
