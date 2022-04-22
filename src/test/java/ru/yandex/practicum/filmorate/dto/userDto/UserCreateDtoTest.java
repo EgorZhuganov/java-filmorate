@@ -67,8 +67,8 @@ class UserCreateDtoTest {
     void test4ifLoginHas2SymbolShouldThrowViolationException(){
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "my",
                 "MyDisplayName", LocalDate.of(1984,12,12));
-        System.out.println(userCreateDto1);
 
+        Assertions.assertThrows(ConstraintViolationException.class, () -> controller.create(userCreateDto1));
     }
 
     @Test
