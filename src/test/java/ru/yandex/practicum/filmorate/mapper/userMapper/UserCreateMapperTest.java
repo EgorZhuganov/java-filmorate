@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 class UserCreateMapperTest {
 
-    UserCreateMapper mapper = new UserCreateMapper();
+    private final UserCreateMapper mapper = new UserCreateMapper();
     private final UserCreateDto userCreateDto1 = new UserCreateDto(1L, "myMail@mail.ru", "myLogin",
             "myDisplayName", LocalDate.of(2000,1,1));
 

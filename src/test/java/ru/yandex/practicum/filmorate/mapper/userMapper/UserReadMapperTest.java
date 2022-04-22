@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserReadMapperTest {
 
-    UserReadMapper mapper = new UserReadMapper();
+    private final UserReadMapper mapper = new UserReadMapper();
     private final User user = User
             .builder()
             .id(1L)

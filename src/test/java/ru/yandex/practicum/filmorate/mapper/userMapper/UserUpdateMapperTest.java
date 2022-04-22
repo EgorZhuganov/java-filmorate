@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 class UserUpdateMapperTest {
 
-    UserUpdateMapper mapper = new UserUpdateMapper();
+    private final UserUpdateMapper mapper = new UserUpdateMapper();
     private final User user = User
             .builder()
             .id(1L)
