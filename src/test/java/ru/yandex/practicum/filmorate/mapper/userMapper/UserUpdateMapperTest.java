@@ -2,14 +2,10 @@ package ru.yandex.practicum.filmorate.mapper.userMapper;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
-import ru.yandex.practicum.filmorate.mapper.Mapper;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserUpdateMapperTest {
 

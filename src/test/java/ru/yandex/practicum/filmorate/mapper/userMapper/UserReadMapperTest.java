@@ -2,9 +2,6 @@ package ru.yandex.practicum.filmorate.mapper.userMapper;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.model.User;
 
