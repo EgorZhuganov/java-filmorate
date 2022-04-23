@@ -22,18 +22,18 @@ import static java.util.stream.Collectors.*;
 @Validated
 public class UserService {
 
-    private final AbstractRepository<Long, User> userRepository;
+    private final AbstractRepository<Long, User> repository;
     private final Map<String, UserMapper<?, ?>> mapper;
 
     @Autowired
-    public UserService(AbstractRepository<Long, User> userRepository, List<UserMapper<?, ?>> mappers) {
-        this.userRepository = userRepository;
+    public UserService(AbstractRepository<Long, User> repository, List<UserMapper<?, ?>> mappers) {
+        this.repository = repository;
         this.mapper = mappers.stream().collect(toMap(UserMapper::getKey, Function.identity()));
     }
 
     public List<UserReadDto> findAll() {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
-        return userRepository.findAll()
+        return repository.findAll()
                 .stream()
                 .map(userReadMapper::mapFrom)
                 .collect(toList());
@@ -41,7 +41,7 @@ public class UserService {
 
     public Optional<UserReadDto> findById(Long id) {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
-        return userRepository.findById(id).map(userReadMapper::mapFrom);
+        return repository.findById(id).map(userReadMapper::mapFrom);
     }
 
     //@Transactional
@@ -50,7 +50,7 @@ public class UserService {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         return Optional.of(userCreateDto)
                 .map(userCreateMapper::mapFrom)
-                .map(userRepository::save)
+                .map(repository::save)
                 .map(userReadMapper::mapFrom)
                 .orElseThrow();
     }
@@ -59,14 +59,14 @@ public class UserService {
     public Optional<UserReadDto> update(Long id, @Valid UserUpdateDto userUpdateDto) {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         var userUpdateMapper = (UserUpdateMapper) mapper.get(UserUpdateMapper.class.getName());
-        return userRepository.findById(id)
+        return repository.findById(id)
                 .map(userModel -> userUpdateMapper.mapFrom(userUpdateDto, userModel))
-                .map(userRepository::update)
+                .map(repository::update)
                 .map(userReadMapper::mapFrom);
     }
 
     //@Transactional
     public boolean delete(Long id) {
-        return userRepository.delete(id);
+        return repository.delete(id);
     }
 }
