@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = DateValidator.class)
 @Documented
 public @interface IsAfter{
-    String message() default "{javax.validation.constraints.IsAfter.message}";
+    String message() default "date have to be after then \"${validatedValue}\"";
     String minDate();
 
     Class<?>[] groups() default {};
