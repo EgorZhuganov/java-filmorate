@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dto.userDto;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +7,8 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserCreateDtoTest {
@@ -23,11 +24,11 @@ class UserCreateDtoTest {
 
         UserReadDto userReadDto1 = service.findById(userCreateDto1.getId()).get();
 
-        Assertions.assertEquals(userReadDto1.getId(), userCreateDto1.getId());
-        Assertions.assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
-        Assertions.assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
-        Assertions.assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
-        Assertions.assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
+        assertEquals(userReadDto1.getId(), userCreateDto1.getId());
+        assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
+        assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
+        assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
     }
 
     @Test
@@ -35,7 +36,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(null, "mymail@mail.ru", "myLogin",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -43,7 +44,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "yailru", "myLogin",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -51,7 +52,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -59,7 +60,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "my",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -67,7 +68,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin8911",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -75,7 +76,7 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin",
                 null, LocalDate.of(1984,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
@@ -83,6 +84,6 @@ class UserCreateDtoTest {
         UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin",
                 "MyDisplayName", LocalDate.of(2500,12,12));
 
-        Assertions.assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 }
