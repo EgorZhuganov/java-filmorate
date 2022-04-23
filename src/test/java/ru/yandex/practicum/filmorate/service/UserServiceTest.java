@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +8,7 @@ import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.memory.UserRepositoryInMemory;
+import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
     @Autowired UserService service;
-    @Autowired UserRepositoryInMemory repository;
+    @Autowired AbstractRepository<Long, User> repository;
 
     private UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
-    UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "mymail@mail.ru", "myLogin",
+    private UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "mymail@mail.ru", "myLogin",
             "MyDisplayName", LocalDate.of(1984, 12, 12));
 
     @Test
@@ -36,7 +34,7 @@ class UserServiceTest {
 
         repository.findAll();
 
-        Assertions.assertEquals(1, repository.findAll().size());
+        assertEquals(1, repository.findAll().size());
     }
 
     @Test
@@ -45,11 +43,11 @@ class UserServiceTest {
 
         User user = repository.findById(userCreateDto1.getId()).get();
 
-        Assertions.assertEquals(user.getLogin(), userCreateDto1.getLogin());
-        Assertions.assertEquals(user.getId(), userCreateDto1.getId());
-        Assertions.assertEquals(user.getDisplayName(), userCreateDto1.getDisplayName());
-        Assertions.assertEquals(user.getBirthday(), userCreateDto1.getBirthday());
-        Assertions.assertEquals(user.getEmail(), userCreateDto1.getEmail());
+        assertEquals(user.getLogin(), userCreateDto1.getLogin());
+        assertEquals(user.getId(), userCreateDto1.getId());
+        assertEquals(user.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(user.getBirthday(), userCreateDto1.getBirthday());
+        assertEquals(user.getEmail(), userCreateDto1.getEmail());
     }
 
     @Test
@@ -59,10 +57,10 @@ class UserServiceTest {
         service.update(userCreateDto1.getId(), userUpdateDto1);
         User user = repository.findById(userCreateDto1.getId()).get();
 
-        Assertions.assertEquals(user.getEmail(), userUpdateDto1.getEmail());
-        Assertions.assertEquals(user.getBirthday(), userUpdateDto1.getBirthday());
-        Assertions.assertEquals(user.getLogin(), userUpdateDto1.getLogin());
-        Assertions.assertEquals(user.getDisplayName(), userUpdateDto1.getDisplayName());
+        assertEquals(user.getEmail(), userUpdateDto1.getEmail());
+        assertEquals(user.getBirthday(), userUpdateDto1.getBirthday());
+        assertEquals(user.getLogin(), userUpdateDto1.getLogin());
+        assertEquals(user.getDisplayName(), userUpdateDto1.getDisplayName());
     }
 
     @Test
@@ -71,8 +69,8 @@ class UserServiceTest {
 
         service.delete(userCreateDto1.getId());
 
-        Assertions.assertEquals(Optional.empty(), repository.findById(userCreateDto1.getId()));
-        Assertions.assertEquals(0, repository.findAll().size());
+        assertEquals(Optional.empty(), repository.findById(userCreateDto1.getId()));
+        assertEquals(0, repository.findAll().size());
     }
 
     @Test
@@ -81,11 +79,11 @@ class UserServiceTest {
 
         UserReadDto userReadDto1 = service.findById(userCreateDto1.getId()).get();
 
-        Assertions.assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
-        Assertions.assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
-        Assertions.assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
-        Assertions.assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
-        Assertions.assertEquals(userReadDto1.getId(), userCreateDto1.getId());
+        assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
+        assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
+        assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
+        assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(userReadDto1.getId(), userCreateDto1.getId());
     }
 
     @Test
@@ -101,6 +99,6 @@ class UserServiceTest {
 
         List<UserReadDto> userReadDtoList = service.findAll();
 
-        Assertions.assertEquals(3, userReadDtoList.size());
+        assertEquals(3, userReadDtoList.size());
     }
 }
