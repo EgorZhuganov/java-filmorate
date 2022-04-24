@@ -101,7 +101,7 @@ class FilmCreateDtoTest {
                 service.create(filmCreateDto1)
         );
 
-        assertTrue(expectedEx.getMessage().endsWith("date have to be after then \"1895-12-28\""));
+        assertTrue(expectedEx.getMessage().endsWith("дата должна быть позже чем \"1895-12-28\""));
     }
 
     @Test
