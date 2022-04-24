@@ -18,7 +18,7 @@ class UserUpdateDtoTest {
 
 
     @Test
-    void test0ifAllFieldsAreCorrectedShouldCreateUser(){
+    void test0ifAllFieldsAreCorrectedShouldUpdateUser(){
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "another@mail.ru", "otherLogin",
                 "MyDisplayName", LocalDate.of(1998,12,12));
 
