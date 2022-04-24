@@ -25,6 +25,6 @@ public class FilmUpdateMapper implements FilmMapper<FilmUpdateDto, Film> {
 
     @Override
     public String getKey() {
-        return FilmUpdateDto.class.getName();
+        return FilmUpdateMapper.class.getName();
     }
 }
