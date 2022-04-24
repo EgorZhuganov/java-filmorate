@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ class UserControllerTest {
     private final UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
 
-    String userAsJson = new ObjectMapper()
+    private String userAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(userCreateDto1);
@@ -98,30 +99,30 @@ class UserControllerTest {
     @Test
     void test6updateIfRepositoryHasUserShouldReturnStatusCode204AndUserAsJson() throws Exception {
         mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(userAsJson));
-        UserCreateDto userCreateDto2 = new UserCreateDto(1L, "ya2@mail.ru", "login2",
+        UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "ya2@mail.ru", "login2",
                 "MyDisplayName2", LocalDate.of(1998, 12, 12));
-        String userCreatedDto2AsJson = new ObjectMapper()
+        String userUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .writeValueAsString(userCreateDto2);
+                .writeValueAsString(userUpdateDto1);
 
-        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(userCreatedDto2AsJson))
+        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(userUpdateDto1AsJson))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(userCreatedDto2AsJson));
+                .andExpect(content().string(userUpdateDto1AsJson));
     }
 
     @Test
     void test7updateTryUpdateUserWithWrongIdShouldReturnStatusCode404AndEmptyResponse() throws Exception {
         mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(userAsJson));
-        UserCreateDto userCreateDto2 = new UserCreateDto(2L, "ya2@mail.ru", "login2",
+        UserUpdateDto userUpdateDto2 = new UserUpdateDto(2L, "ya2@mail.ru", "login2",
                 "MyDisplayName2", LocalDate.of(1998, 12, 12)); //user with wrong id
-        String userCreatedDto2AsJson = new ObjectMapper()
+        String userUpdateDto2AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .writeValueAsString(userCreateDto2);
+                .writeValueAsString(userUpdateDto2);
 
-        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(userCreatedDto2AsJson))
+        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(userUpdateDto2AsJson))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
