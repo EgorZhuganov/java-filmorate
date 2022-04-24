@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/films",  produces = "application/json;charset=UTF-8") //TODO подумать как вынести в properties или настройку проекта
+@RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
 
