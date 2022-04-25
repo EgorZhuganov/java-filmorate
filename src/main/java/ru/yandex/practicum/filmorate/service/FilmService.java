@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmUpdateMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class FilmService {
         return repository.findById(id).map(filmReadMapper::mapFrom);
     }
 
-    public FilmReadDto create(@Valid FilmCreateDto filmCreateDto) {
+    public FilmReadDto create(@Valid FilmCreateDto filmCreateDto) throws ConstraintViolationException {
         var filmCreateMapper = (FilmCreateMapper) mapper.get(FilmCreateMapper.class.getName());
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         return Optional.of(filmCreateDto)
@@ -65,7 +66,7 @@ public class FilmService {
                 .orElseThrow();
     }
 
-    public Optional<FilmReadDto> update(Long id, @Valid FilmUpdateDto filmUpdateDto) {
+    public Optional<FilmReadDto> update(Long id, @Valid FilmUpdateDto filmUpdateDto) throws ConstraintViolationException {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         var filmUpdateMapper = (FilmUpdateMapper) mapper.get(FilmUpdateMapper.class.getName());
         return repository.findById(id)
