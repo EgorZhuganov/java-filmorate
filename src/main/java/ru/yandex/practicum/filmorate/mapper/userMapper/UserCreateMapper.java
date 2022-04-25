@@ -9,11 +9,15 @@ public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
 
     @Override
     public User mapFrom(UserCreateDto object) {
+        String displayName = object.getDisplayName();
+        if (object.getDisplayName().isBlank())
+            displayName = object.getLogin();
+
         return User.builder()
                 .id(object.getId()) //TODO удалить id при создании, поле должно автогенерироваться
                 .email(object.getEmail())
                 .login(object.getLogin())
-                .displayName(object.getDisplayName())
+                .displayName(displayName)
                 .birthday(object.getBirthday())
                 .build();
     }

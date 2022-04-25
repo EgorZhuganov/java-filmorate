@@ -9,11 +9,15 @@ public class UserUpdateMapper implements UserMapper<UserUpdateDto, User> {
 
     @Override
     public User mapFrom(UserUpdateDto object) {
+        String displayName = object.getDisplayName();
+        if (object.getDisplayName().isBlank())
+            displayName = object.getLogin();
+
         return User.builder()
                 .id(object.getId())
                 .email(object.getEmail())
                 .login(object.getLogin())
-                .displayName(object.getDisplayName())
+                .displayName(displayName)
                 .birthday(object.getBirthday())
                 .build();
     }
