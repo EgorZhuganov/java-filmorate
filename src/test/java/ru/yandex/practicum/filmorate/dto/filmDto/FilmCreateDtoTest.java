@@ -21,8 +21,7 @@ class FilmCreateDtoTest {
     void test0ifAllFieldsAreCorrectedShouldCreateFilm() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         service.create(filmCreateDto1);
@@ -40,8 +39,7 @@ class FilmCreateDtoTest {
     void test1ifIdNullShouldThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(null, "12 ст-в", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
@@ -51,8 +49,7 @@ class FilmCreateDtoTest {
     void test2ifNameIsNullShouldThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
@@ -62,17 +59,18 @@ class FilmCreateDtoTest {
     void test3ifNameIsBlankShouldThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "    ", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
     }
 
     @Test
-    void test4ifDescriptionLengthLessThen200ShouldThrowViolationException() {
+    void test4ifDescriptionLengthMoreThen200ShouldThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
-                "******* * *********** ** *** ******* периода военного ",
+                "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
+                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
@@ -82,8 +80,7 @@ class FilmCreateDtoTest {
     void test5ifReleaseDateBeforeDateOfReleaseFirstFilmThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
@@ -93,8 +90,7 @@ class FilmCreateDtoTest {
     void test6ifReleaseDateBeforeDateOfReleaseFirstFilmShouldUsePatterForReturnMessage() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1895, 12, 28), Duration.ofMinutes(161));
 
         Exception expectedEx = assertThrows(ConstraintViolationException.class, () ->
@@ -108,8 +104,7 @@ class FilmCreateDtoTest {
     void test7ifReleaseDateAfterDateOfReleaseFirstFilmShouldCreateFilm() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1895, 12, 29), Duration.ofMinutes(161));
 
         assertDoesNotThrow(() -> service.create(filmCreateDto1));
@@ -119,8 +114,7 @@ class FilmCreateDtoTest {
     void test8ifDurationLessThen1SecondShouldThrowViolationException() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
@@ -130,8 +124,7 @@ class FilmCreateDtoTest {
     void test9ifDurationMoreThen1SecondShouldCreateFilm() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(2));
 
         assertDoesNotThrow(() -> service.create(filmCreateDto1));

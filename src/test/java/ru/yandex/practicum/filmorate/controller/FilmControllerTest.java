@@ -39,8 +39,7 @@ class FilmControllerTest {
 
     private FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-            "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-            "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+            "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
             LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
     private String filmAsJson = new ObjectMapper()
@@ -108,8 +107,7 @@ class FilmControllerTest {
         mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -128,8 +126,7 @@ class FilmControllerTest {
         mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(2L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161)); //user with wrong id
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())

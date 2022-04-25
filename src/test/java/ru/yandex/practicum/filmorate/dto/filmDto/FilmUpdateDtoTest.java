@@ -18,16 +18,14 @@ class FilmUpdateDtoTest {
 
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-            "можно надежнее. И вот Ипполит ******** Воробьянинов, ******** Старгородский предводитель дворянства и " +
-            "светский лев, а ныне — скромный делопроизводитель ЗАГСа, ******* от умирающей тещи...",
+            "можно надежнее. И вот Ипполит ******** Воробьянинов...",
             LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldUpdateFilm() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         service.create(filmCreateDto1);
@@ -46,8 +44,7 @@ class FilmUpdateDtoTest {
     void test1ifIdNullShouldThrowViolationException() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -57,8 +54,7 @@ class FilmUpdateDtoTest {
     void test2ifIdNullShouldReturnSpecifiedMessage() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -70,8 +66,7 @@ class FilmUpdateDtoTest {
     void test3ifNameIsBlankShouldThrowViolationException() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -81,8 +76,7 @@ class FilmUpdateDtoTest {
     void test4ifNameIsBlankShouldReturnSpecifiedMessage() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -91,31 +85,34 @@ class FilmUpdateDtoTest {
     }
 
     @Test
-    void test5ifDescriptionSizeLessThen200SymbolShouldThrowViolationException() {
+    void test5ifDescriptionSizeMoreThen200SymbolShouldThrowViolationException() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
-                "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности...",
+                "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
+                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
     }
 
     @Test
-    void test6ifDescriptionSizeLessThen200SymbolShouldReturnSpecifiedMessage() {
+    void test6ifDescriptionSizeMoreThen200SymbolShouldReturnSpecifiedMessage() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
-                "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности...",
+                "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
+                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
 
-        assertTrue(ex.getMessage().endsWith("размер должен находиться в диапазоне от 200 до 2147483647"));
+        assertTrue(ex.getMessage().endsWith("размер должен находиться в диапазоне от 0 до 200"));
     }
 
     @Test
     void test7ifReleaseDateBeforeDateOfReleaseFirstFilmShouldThrowViolationException() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -125,8 +122,7 @@ class FilmUpdateDtoTest {
     void test8ifReleaseDateBeforeDateOfReleaseFirstFilmShouldReturnSpecifiedMessage() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -138,8 +134,7 @@ class FilmUpdateDtoTest {
     void test9ifDurationLessThen1SecondShouldThrowViolationException() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
@@ -149,8 +144,7 @@ class FilmUpdateDtoTest {
     void test10ifDurationLessThen1SecondShouldReturnSpecifiedMessage() {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
-                "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
