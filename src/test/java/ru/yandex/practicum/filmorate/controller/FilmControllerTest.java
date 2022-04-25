@@ -12,6 +12,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
 
 import java.net.URI;
 import java.time.Duration;
@@ -163,5 +165,47 @@ class FilmControllerTest {
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
+    }
+
+    @Test
+    void test11createIfRequestHasNotValidFieldsShouldReturnStatusCode400() throws Exception {
+        FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, null, "Во время " +
+                "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
+                LocalDate.of(999, 6, 21), Duration.ofMinutes(0));
+
+        String filmAsJson = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                .writeValueAsString(filmCreateDto1);
+
+        mockMvc.perform(post(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(filmAsJson))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void test12updateIfRequestHasNotValidFieldsShouldReturnStatusCode400() throws Exception {
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, null, "Во время " +
+                "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
+                LocalDate.of(999, 6, 21), Duration.ofMinutes(0));
+
+        String filmUpdateAsJson = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                .writeValueAsString(filmUpdateDto1);
+
+        mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(filmUpdateAsJson))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
     }
 }

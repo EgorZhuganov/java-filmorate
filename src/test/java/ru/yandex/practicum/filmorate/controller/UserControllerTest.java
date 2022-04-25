@@ -153,4 +153,40 @@ class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
     }
+
+    @Test
+    void test11createIfRequestHasNotValidFieldsShouldReturnStatusCode400() throws Exception {
+        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "wrongEmail", null,
+                "MyDisplayName", LocalDate.of(1998, 12, 12));
+
+        String userAsJson = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(userCreateDto1);
+
+        mockMvc.perform(post(url)
+                .contentType(APPLICATION_JSON)
+                .content(userAsJson))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void test12updateIfRequestHasNotValidFieldsShouldReturnStatusCode400() throws Exception {
+        UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "wrongEmail", null,
+                "MyDisplayName", LocalDate.of(1998, 12, 12));
+
+        String userUpdateAsJson = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(userUpdateDto1);
+
+        mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(userAsJson));
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(userUpdateAsJson))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
 }
