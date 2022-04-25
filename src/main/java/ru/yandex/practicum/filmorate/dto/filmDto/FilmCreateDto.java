@@ -26,7 +26,7 @@ public class FilmCreateDto {
     Long id; //TODO удалить поле после ТЗ подумать об автогенерации ID
     @NotBlank
     String name;
-    @Size(min = 200)
+    @NotBlank @Size(max = 200)
     String description;
     @IsAfter(minDate = DATE_OF_RELEASE_FIRST_FILM)
     LocalDate releaseDate;
