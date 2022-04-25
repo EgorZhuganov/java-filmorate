@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Service
 @Validated
+@Slf4j
 public class FilmService {
 
     private final AbstractRepository<Long, Film> repository;
@@ -55,7 +57,10 @@ public class FilmService {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         return Optional.of(filmCreateDto)
                 .map(filmCreateMapper::mapFrom)
-                .map(repository::save)
+                .map(film -> {
+                    log.info("film {} was created", film.getName());
+                    return repository.save(film);
+                })
                 .map(filmReadMapper::mapFrom)
                 .orElseThrow();
     }
@@ -65,7 +70,10 @@ public class FilmService {
         var filmUpdateMapper = (FilmUpdateMapper) mapper.get(FilmUpdateMapper.class.getName());
         return repository.findById(id)
                 .map(filmModel -> filmUpdateMapper.mapFrom(filmUpdateDto, filmModel))
-                .map(repository::update)
+                .map(film -> {
+                    log.info("film {} was updated", film.getName());
+                    return repository.update(film);
+                })
                 .map(filmReadMapper::mapFrom);
     }
 

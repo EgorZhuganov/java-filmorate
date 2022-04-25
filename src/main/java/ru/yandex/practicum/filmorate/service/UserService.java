@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import static java.util.stream.Collectors.*;
 @Service
 //@Transactional(readOnly = true)
 @Validated
+@Slf4j
 public class UserService {
 
     private final AbstractRepository<Long, User> repository;
@@ -50,7 +52,10 @@ public class UserService {
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         return Optional.of(userCreateDto)
                 .map(userCreateMapper::mapFrom)
-                .map(repository::save)
+                .map(user -> {
+                    log.info("user {} was registered", user.getEmail());
+                    return repository.save(user);
+                })
                 .map(userReadMapper::mapFrom)
                 .orElseThrow();
     }
@@ -61,7 +66,10 @@ public class UserService {
         var userUpdateMapper = (UserUpdateMapper) mapper.get(UserUpdateMapper.class.getName());
         return repository.findById(id)
                 .map(userModel -> userUpdateMapper.mapFrom(userUpdateDto, userModel))
-                .map(repository::update)
+                .map(user -> {
+                    log.info("user {} was updated", user.getEmail());
+                    return repository.update(user);
+                })
                 .map(userReadMapper::mapFrom);
     }
 
