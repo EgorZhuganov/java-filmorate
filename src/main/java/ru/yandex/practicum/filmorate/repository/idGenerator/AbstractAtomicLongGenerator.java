@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.repository.idGenerator;
 
-import org.springframework.stereotype.Service;
-
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbstractAtomicLongGenerator<EntityType> implements GenerateNextIdService<Long, EntityType>  {

@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.repository.memory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 import ru.yandex.practicum.filmorate.repository.idGenerator.GenerateNextIdService;
@@ -9,7 +7,6 @@ import ru.yandex.practicum.filmorate.repository.idGenerator.GenerateNextIdServic
 import java.io.Serializable;
 import java.util.*;
 
-@Repository
 public abstract class BaseRepositoryInMemory<K extends Serializable, E extends BaseModel<K>> implements AbstractRepository<K, E> {
 
     private final Map<K, E> storage;
