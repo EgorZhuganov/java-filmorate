@@ -14,17 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class UserUpdateDtoTest {
 
-    @Autowired UserService service;
+    @Autowired
+    private UserService service;
     private UserCreateDto userCreateDto = new UserCreateDto("ya@mail.ru", "login",
-            "MyDisplayName", LocalDate.of(1998,12,12));
+            "MyDisplayName", LocalDate.of(1998, 12, 12));
 
 
     @Test
-    void test0ifAllFieldsAreCorrectedShouldUpdateUser(){
+    void test0ifAllFieldsAreCorrectedShouldUpdateUser() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "another@mail.ru", "otherLogin",
-                "MyDisplayName", LocalDate.of(1998,12,12));
+                "MyDisplayName", LocalDate.of(1998, 12, 12));
         service.update(userReadDto1.getId(), userUpdateDto1);
         UserReadDto updatedUserReadDto = service.findById(userReadDto1.getId()).get();
 
@@ -35,72 +36,72 @@ class UserUpdateDtoTest {
     }
 
     @Test
-    void test1ifIdNullShouldThrowViolationException(){
+    void test1ifIdNullShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(null, "mymail@mail.ru", "myLogin",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }
 
     @Test
-    void test2ifEmailHasWrongTypeShouldThrowViolationException(){
+    void test2ifEmailHasWrongTypeShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "yailru", "myLogin",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }
 
     @Test
-    void test3ifLoginIsBlankShouldThrowViolationException(){
+    void test3ifLoginIsBlankShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "ya@mail.ru", "",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }
 
     @Test
-    void test4ifLoginHas2SymbolShouldThrowViolationException(){
+    void test4ifLoginHas2SymbolShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "ya@mail.ru", "my",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
 
     }
 
     @Test
-    void test5ifLoginHas11SymbolShouldThrowViolationException(){
+    void test5ifLoginHas11SymbolShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "ya@mail.ru", "myLogin8911",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }
 
     @Test
-    void test6ifDisplayNameIsNullShouldThrowViolationException(){
+    void test6ifDisplayNameIsNullShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "ya@mail.ru", "myLogin",
-                null, LocalDate.of(1984,12,12));
+                null, LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }
 
     @Test
-    void test7ifBirthdayIsDateOfFutureShouldThrowViolationException (){
+    void test7ifBirthdayIsDateOfFutureShouldThrowViolationException() {
         UserReadDto userReadDto1 = service.create(userCreateDto);
 
         UserUpdateDto userUpdateDto1 = new UserUpdateDto(userReadDto1.getId(), "ya@mail.ru", "myLogin",
-                "MyDisplayName", LocalDate.of(2500,12,12));
+                "MyDisplayName", LocalDate.of(2500, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.update(userReadDto1.getId(), userUpdateDto1));
     }

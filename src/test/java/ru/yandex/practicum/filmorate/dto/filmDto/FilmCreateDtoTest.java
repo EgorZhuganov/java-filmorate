@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmCreateDtoTest {
 
     @Autowired
-    FilmService service;
+    private FilmService service;
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldCreateFilm() {

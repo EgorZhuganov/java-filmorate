@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class FilmUpdateDtoTest {
 
-    @Autowired FilmService service;
+    @Autowired
+    private FilmService service;
 
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +

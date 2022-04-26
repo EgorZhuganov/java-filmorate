@@ -13,12 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserCreateDtoTest {
 
-    @Autowired UserService service;
+    @Autowired
+    private UserService service;
 
     @Test
-    void test0ifAllFieldsAreCorrectedShouldCreateUser(){
+    void test0ifAllFieldsAreCorrectedShouldCreateUser() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
-                "MyDisplayName", LocalDate.of(1998,12,12));
+                "MyDisplayName", LocalDate.of(1998, 12, 12));
 
         UserReadDto userReadDto1 = service.create(userCreateDto1);
 
@@ -29,49 +30,49 @@ class UserCreateDtoTest {
     }
 
     @Test
-    void test2ifEmailHasWrongTypeShouldThrowViolationException(){
+    void test2ifEmailHasWrongTypeShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("yailru", "myLogin",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
-    void test3ifLoginIsBlankShouldThrowViolationException(){
+    void test3ifLoginIsBlankShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
-    void test4ifLoginHas2SymbolShouldThrowViolationException(){
+    void test4ifLoginHas2SymbolShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "my",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
-    void test5ifLoginHas11SymbolShouldThrowViolationException(){
+    void test5ifLoginHas11SymbolShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin8911",
-                "MyDisplayName", LocalDate.of(1984,12,12));
+                "MyDisplayName", LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
-    void test6ifDisplayNameIsNullShouldThrowViolationException(){
+    void test6ifDisplayNameIsNullShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin",
-                null, LocalDate.of(1984,12,12));
+                null, LocalDate.of(1984, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }
 
     @Test
-    void test7ifBirthdayIsDateOfFutureShouldThrowViolationException (){
+    void test7ifBirthdayIsDateOfFutureShouldThrowViolationException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin",
-                "MyDisplayName", LocalDate.of(2500,12,12));
+                "MyDisplayName", LocalDate.of(2500, 12, 12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
     }

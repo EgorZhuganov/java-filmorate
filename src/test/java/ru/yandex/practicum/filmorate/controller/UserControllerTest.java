@@ -202,8 +202,8 @@ class UserControllerTest {
                 .writeValueAsString(userCreateDto1);
 
         mockMvc.perform(post(url)
-                .contentType(APPLICATION_JSON)
-                .content(userAsJson))
+                        .contentType(APPLICATION_JSON)
+                        .content(userAsJson))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }

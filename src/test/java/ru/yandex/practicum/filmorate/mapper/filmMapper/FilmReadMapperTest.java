@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.mapper.filmMapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FilmReadMapperTest {
 
@@ -26,10 +27,10 @@ class FilmReadMapperTest {
     void mapFrom() {
         FilmReadDto filmReadDto1 = mapper.mapFrom(film);
 
-        Assertions.assertEquals(filmReadDto1.getId(), film.getId());
-        Assertions.assertEquals(filmReadDto1.getName(), film.getName());
-        Assertions.assertEquals(filmReadDto1.getDescription(), film.getDescription());
-        Assertions.assertEquals(filmReadDto1.getReleaseDate(), film.getReleaseDate());
-        Assertions.assertEquals(filmReadDto1.getDuration(), film.getDuration());
+        assertEquals(filmReadDto1.getId(), film.getId());
+        assertEquals(filmReadDto1.getName(), film.getName());
+        assertEquals(filmReadDto1.getDescription(), film.getDescription());
+        assertEquals(filmReadDto1.getReleaseDate(), film.getReleaseDate());
+        assertEquals(filmReadDto1.getDuration(), film.getDuration());
     }
 }

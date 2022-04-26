@@ -21,7 +21,7 @@ class UserUpdateMapperTest {
             .build();
 
     private final UserUpdateDto userUpdateDto = new UserUpdateDto(1L, "ya@mail.ru", "myLogin",
-            "myDisplayName", LocalDate.of(1984,12,12));
+            "myDisplayName", LocalDate.of(1984, 12, 12));
 
     @Test
     void mapFrom() {

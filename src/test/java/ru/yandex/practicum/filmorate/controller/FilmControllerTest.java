@@ -36,7 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
 
-    FilmControllerTest() throws JsonProcessingException {}
+    FilmControllerTest() throws JsonProcessingException {
+    }
+
     @Autowired
     private MockMvc mockMvc;
 

@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmServiceTest {
 
     @Autowired
-    FilmService service;
+    private FilmService service;
     @Autowired
-    AbstractRepository<Long, Film> repository;
+    private AbstractRepository<Long, Film> repository;
 
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
