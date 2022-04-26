@@ -9,7 +9,7 @@ import java.util.Map;
 @Repository
 public class FilmRepositoryInMemory extends BaseRepositoryInMemory<Long, Film> {
 
-    public FilmRepositoryInMemory(Map<Long, Film> storage, GenerateNextIdService<Long> idService) {
+    public FilmRepositoryInMemory(Map<Long, Film> storage, GenerateNextIdService<Long, Film> idService) {
         super(storage, idService);
     }
 

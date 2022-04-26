@@ -9,7 +9,7 @@ import java.util.Map;
 @Repository
 public class UserRepositoryInMemory extends BaseRepositoryInMemory<Long, User> {
 
-    public UserRepositoryInMemory(Map<Long, User> storage, GenerateNextIdService<Long> idService) {
+    public UserRepositoryInMemory(Map<Long, User> storage, GenerateNextIdService<Long, User> idService) {
         super(storage, idService);
     }
 

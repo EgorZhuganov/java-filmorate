@@ -13,9 +13,9 @@ import java.util.*;
 public abstract class BaseRepositoryInMemory<K extends Serializable, E extends BaseModel<K>> implements AbstractRepository<K, E> {
 
     private final Map<K, E> storage;
-    private final GenerateNextIdService<K> nextIdService;
+    private final GenerateNextIdService<K, E> nextIdService;
 
-    public BaseRepositoryInMemory(Map<K, E> storage, GenerateNextIdService<K> idService) {
+    public BaseRepositoryInMemory(Map<K, E> storage, GenerateNextIdService<K, E> idService) {
         this.storage = storage;
         this.nextIdService = idService;
     }
