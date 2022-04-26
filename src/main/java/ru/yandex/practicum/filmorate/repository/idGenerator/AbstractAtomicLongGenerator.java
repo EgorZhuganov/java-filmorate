@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class AtomicLongGenerator implements GenerateNextIdService<Long>  {
+public abstract class AbstractAtomicLongGenerator<EntityType> implements GenerateNextIdService<Long, EntityType>  {
 
     private final AtomicLong atomicLong;
 
-    public AtomicLongGenerator () {
+    public AbstractAtomicLongGenerator() {
         atomicLong = new AtomicLong(1L);
     }
 
