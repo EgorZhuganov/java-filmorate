@@ -22,8 +22,6 @@ import java.time.LocalDate;
 public class FilmCreateDto {
 
     private static final String DATE_OF_RELEASE_FIRST_FILM = "1895-12-28";
-    @NotNull
-    Long id; //TODO удалить поле после ТЗ подумать об автогенерации ID
     @NotBlank
     String name;
     @NotBlank @Size(max = 200)

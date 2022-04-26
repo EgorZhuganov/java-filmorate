@@ -10,7 +10,6 @@ public class FilmCreateMapper implements FilmMapper<FilmCreateDto, Film> {
     @Override
     public Film mapFrom(FilmCreateDto object) {
         return Film.builder()
-                .id(object.getId())
                 .name(object.getName())
                 .description(object.getDescription())
                 .releaseDate(object.getReleaseDate())
