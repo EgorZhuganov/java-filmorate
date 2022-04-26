@@ -16,138 +16,158 @@ class FilmUpdateDtoTest {
 
     @Autowired FilmService service;
 
-    private final FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 ст-в", "Во время " +
+    private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов...",
             LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldUpdateFilm() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        service.create(filmCreateDto1);
-        service.update(filmCreateDto1.getId(), filmUpdateDto1);
 
-        FilmReadDto filmReadDto1 = service.findById(filmUpdateDto1.getId()).get();
+        FilmReadDto filmReadDto2 = service.update(filmReadDto1.getId(), filmUpdateDto1).get();
 
-        assertEquals(filmReadDto1.getId(), filmUpdateDto1.getId());
-        assertEquals(filmReadDto1.getName(), filmUpdateDto1.getName());
-        assertEquals(filmReadDto1.getDescription(), filmUpdateDto1.getDescription());
-        assertEquals(filmReadDto1.getDuration(), filmUpdateDto1.getDuration());
-        assertEquals(filmReadDto1.getReleaseDate(), filmUpdateDto1.getReleaseDate());
+        assertEquals(filmReadDto2.getId(), filmUpdateDto1.getId());
+        assertEquals(filmReadDto2.getName(), filmUpdateDto1.getName());
+        assertEquals(filmReadDto2.getDescription(), filmUpdateDto1.getDescription());
+        assertEquals(filmReadDto2.getDuration(), filmUpdateDto1.getDuration());
+        assertEquals(filmReadDto2.getReleaseDate(), filmUpdateDto1.getReleaseDate());
     }
 
     @Test
     void test1ifIdNullShouldThrowViolationException() {
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
 
     @Test
     void test2ifIdNullShouldReturnSpecifiedMessage() {
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
         assertTrue(ex.getMessage().endsWith("не должно равняться null"));
     }
 
     @Test
     void test3ifNameIsBlankShouldThrowViolationException() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "      ", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
 
     @Test
     void test4ifNameIsBlankShouldReturnSpecifiedMessage() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "      ", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
         assertTrue(ex.getMessage().endsWith("не должно быть пустым"));
     }
 
     @Test
     void test5ifDescriptionSizeMoreThen200SymbolShouldThrowViolationException() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
                 "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
 
     @Test
     void test6ifDescriptionSizeMoreThen200SymbolShouldReturnSpecifiedMessage() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
                 "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
         assertTrue(ex.getMessage().endsWith("размер должен находиться в диапазоне от 0 до 200"));
     }
 
     @Test
     void test7ifReleaseDateBeforeDateOfReleaseFirstFilmShouldThrowViolationException() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
 
-        assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
 
     @Test
     void test8ifReleaseDateBeforeDateOfReleaseFirstFilmShouldReturnSpecifiedMessage() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
 
-        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
         assertTrue(ex.getMessage().endsWith("дата должна быть позже чем \"1895-12-27\""));
     }
 
     @Test
     void test9ifDurationLessThen1SecondShouldThrowViolationException() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
 
-        assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
 
     @Test
     void test10ifDurationLessThen1SecondShouldReturnSpecifiedMessage() {
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
 
-        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmCreateDto1.getId(), filmUpdateDto1));
+        Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
         assertTrue(ex.getMessage().endsWith("должно быть длиннее или равно 1 с"));
     }

@@ -21,17 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmServiceTest {
 
-    @Autowired FilmService service;
-    @Autowired AbstractRepository<Long, Film> repository;
+    @Autowired
+    FilmService service;
+    @Autowired
+    AbstractRepository<Long, Film> repository;
 
-    private final FilmCreateDto filmCreateDto1 = new FilmCreateDto(1L, "12 ст-в", "Во время " +
+    private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-            LocalDate.of(1971,6,21), Duration.ofMinutes(161));
-    private final FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(1L, "12 стульев", "Во время " +
-            "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
-            "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-            LocalDate.of(1971,6,21), Duration.ofMinutes(161));
+            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
     @Test
     void test1createOneFilmShouldReturnFromRepositoryOneFilm() {
@@ -44,11 +42,10 @@ class FilmServiceTest {
 
     @Test
     void test2createOneFilmShouldReturnFromRepositoryFilmWithEqualsFields() {
-        service.create(filmCreateDto1);
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
 
-        Film film = repository.findById(filmCreateDto1.getId()).get();
+        Film film = repository.findById(filmReadDto1.getId()).get();
 
-        assertEquals(film.getId(), filmCreateDto1.getId());
         assertEquals(film.getName(), filmCreateDto1.getName());
         assertEquals(film.getDescription(), filmCreateDto1.getDescription());
         assertEquals(film.getReleaseDate(), filmCreateDto1.getReleaseDate());
@@ -57,10 +54,14 @@ class FilmServiceTest {
 
     @Test
     void test3updateShouldUpdateFilmInRepositoryAndReturnEqualsFields() {
-        service.create(filmCreateDto1);
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
+                "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
+                "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
 
-        service.update(filmCreateDto1.getId(), filmUpdateDto1);
-        Film film = repository.findById(filmCreateDto1.getId()).get();
+        service.update(filmReadDto1.getId(), filmUpdateDto1);
+        Film film = repository.findById(filmReadDto1.getId()).get();
 
         assertEquals(film.getId(), filmUpdateDto1.getId());
         assertEquals(film.getName(), filmUpdateDto1.getName());
@@ -71,37 +72,36 @@ class FilmServiceTest {
 
     @Test
     void test4deleteShouldReturnOptionalEmptyAnd0FilmsFromRepository() {
-        service.create(filmCreateDto1);
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
 
-        service.delete(filmCreateDto1.getId());
+        service.delete(filmReadDto1.getId());
 
-        assertEquals(Optional.empty(), repository.findById(filmCreateDto1.getId()));
+        assertEquals(Optional.empty(), repository.findById(filmReadDto1.getId()));
         assertEquals(0, repository.findAll().size());
     }
 
     @Test
     void test5findByIdShouldReturnFilmReadDtoWithTheSameFields() {
-        service.create(filmCreateDto1);
+        FilmReadDto filmReadDto1 = service.create(filmCreateDto1);
 
-        FilmReadDto filmReadDto = service.findById(filmCreateDto1.getId()).get();
+        FilmReadDto filmReadDto2 = service.findById(filmReadDto1.getId()).get();
 
-        assertEquals(filmReadDto.getId(), filmCreateDto1.getId());
-        assertEquals(filmReadDto.getName(), filmCreateDto1.getName());
-        assertEquals(filmReadDto.getDescription(), filmCreateDto1.getDescription());
-        assertEquals(filmReadDto.getDuration(), filmCreateDto1.getDuration());
-        assertEquals(filmReadDto.getReleaseDate(), filmCreateDto1.getReleaseDate());
+        assertEquals(filmReadDto2.getName(), filmCreateDto1.getName());
+        assertEquals(filmReadDto2.getDescription(), filmCreateDto1.getDescription());
+        assertEquals(filmReadDto2.getDuration(), filmCreateDto1.getDuration());
+        assertEquals(filmReadDto2.getReleaseDate(), filmCreateDto1.getReleaseDate());
     }
 
     @Test
     void test6findAllIfAdd3FilmCreateDtoShouldReturnListWith3Film() {
-        FilmCreateDto filmCreateDto2 = new FilmCreateDto(2L, "12 ст-в", "Анатолий Ефремович " +
+        FilmCreateDto filmCreateDto2 = new FilmCreateDto("12 ст-в", "Анатолий Ефремович " +
                 "Новосельцев, рядовой служащий одного статистического управления, — человек робкий и застенчивый. " +
                 "Для него неплохо бы получить вакантное место зав. отделом, но...",
-                LocalDate.of(1977,10,26), Duration.ofMinutes(151));
-        FilmCreateDto filmCreateDto3 = new FilmCreateDto(3L, "Бриллиантовая рука", "Кинороман из " +
+                LocalDate.of(1977, 10, 26), Duration.ofMinutes(151));
+        FilmCreateDto filmCreateDto3 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969,4,28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
 
         service.create(filmCreateDto1);
         service.create(filmCreateDto2);
