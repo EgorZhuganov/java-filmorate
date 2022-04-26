@@ -20,10 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserServiceTest {
 
-    @Autowired UserService service;
-    @Autowired AbstractRepository<Long, User> repository;
+    @Autowired
+    UserService service;
+    @Autowired
+    AbstractRepository<Long, User> repository;
 
-    private UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "login",
+    private UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
     private UserUpdateDto userUpdateDto1 = new UserUpdateDto(1L, "mymail@mail.ru", "myLogin",
             "MyDisplayName", LocalDate.of(1984, 12, 12));
@@ -39,12 +41,11 @@ class UserServiceTest {
 
     @Test
     void test2createOneUserShouldReturnFromRepositoryUserWithEqualsFields() {
-        service.create(userCreateDto1);
+        UserReadDto userReadDto1 = service.create(userCreateDto1);
 
-        User user = repository.findById(userCreateDto1.getId()).get();
+        User user = repository.findById(userReadDto1.getId()).get();
 
         assertEquals(user.getLogin(), userCreateDto1.getLogin());
-        assertEquals(user.getId(), userCreateDto1.getId());
         assertEquals(user.getDisplayName(), userCreateDto1.getDisplayName());
         assertEquals(user.getBirthday(), userCreateDto1.getBirthday());
         assertEquals(user.getEmail(), userCreateDto1.getEmail());
@@ -52,10 +53,10 @@ class UserServiceTest {
 
     @Test
     void test3updateShouldUpdateUserInRepositoryAndReturnEqualsFields() {
-        service.create(userCreateDto1);
+        UserReadDto userReadDto = service.create(userCreateDto1);
 
-        service.update(userCreateDto1.getId(), userUpdateDto1);
-        User user = repository.findById(userCreateDto1.getId()).get();
+        service.update(userReadDto.getId(), userUpdateDto1);
+        User user = repository.findById(userReadDto.getId()).get();
 
         assertEquals(user.getEmail(), userUpdateDto1.getEmail());
         assertEquals(user.getBirthday(), userUpdateDto1.getBirthday());
@@ -65,37 +66,36 @@ class UserServiceTest {
 
     @Test
     void test4deleteShouldReturnOptionalEmptyAnd0UsersFromRepository() {
-        service.create(userCreateDto1);
+        UserReadDto userReadDto = service.create(userCreateDto1);
 
-        service.delete(userCreateDto1.getId());
+        service.delete(userReadDto.getId());
 
-        assertEquals(Optional.empty(), repository.findById(userCreateDto1.getId()));
+        assertEquals(Optional.empty(), repository.findById(userReadDto.getId()));
         assertEquals(0, repository.findAll().size());
     }
 
     @Test
     void test5findByIdShouldReturnUserReadDtoWithTheSameFields() {
-        service.create(userCreateDto1);
+        UserReadDto userReadDto = service.create(userCreateDto1);
 
-        UserReadDto userReadDto1 = service.findById(userCreateDto1.getId()).get();
+        UserReadDto userReadDto1 = service.findById(userReadDto.getId()).get();
 
         assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
         assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
         assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
         assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
-        assertEquals(userReadDto1.getId(), userCreateDto1.getId());
     }
 
     @Test
     void test6findAllIfAdd3UserCreateDtoShouldReturnListWith3User() {
-        UserCreateDto userCreateDto2 = new UserCreateDto(2L, "some@mail.ru", "login1",
+        UserCreateDto userCreateDto2 = new UserCreateDto("some@mail.ru", "login1",
                 "MyDisplayName1", LocalDate.of(1998, 12, 12));
-        UserCreateDto userCreateDto3 = new UserCreateDto(3L, "other@mail.ru", "login2",
+        UserCreateDto userCreateDto3 = new UserCreateDto("other@mail.ru", "login2",
                 "MyDisplayName2", LocalDate.of(1998, 12, 12));
 
-        service.create(userCreateDto1);
-        service.create(userCreateDto2);
-        service.create(userCreateDto3);
+        UserReadDto userReadDto1 = service.create(userCreateDto1);
+        UserReadDto userReadDto2 = service.create(userCreateDto2);
+        UserReadDto userReadDto3 = service.create(userCreateDto3);
 
         List<UserReadDto> userReadDtoList = service.findAll();
 

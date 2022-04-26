@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.mapper.userMapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserUpdateMapperTest {
 
@@ -26,10 +27,10 @@ class UserUpdateMapperTest {
     void mapFrom() {
         User updatedUser = mapper.mapFrom(userUpdateDto, user);
 
-        Assertions.assertEquals(userUpdateDto.getId(), updatedUser.getId());
-        Assertions.assertEquals(userUpdateDto.getEmail(), updatedUser.getEmail());
-        Assertions.assertEquals(userUpdateDto.getLogin(), updatedUser.getLogin());
-        Assertions.assertEquals(userUpdateDto.getDisplayName(), updatedUser.getDisplayName());
-        Assertions.assertEquals(userUpdateDto.getBirthday(), updatedUser.getBirthday());
+        assertEquals(userUpdateDto.getId(), updatedUser.getId());
+        assertEquals(userUpdateDto.getEmail(), updatedUser.getEmail());
+        assertEquals(userUpdateDto.getLogin(), updatedUser.getLogin());
+        assertEquals(userUpdateDto.getDisplayName(), updatedUser.getDisplayName());
+        assertEquals(userUpdateDto.getBirthday(), updatedUser.getBirthday());
     }
 }

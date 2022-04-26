@@ -17,14 +17,11 @@ class UserCreateDtoTest {
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldCreateUser(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "login",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
                 "MyDisplayName", LocalDate.of(1998,12,12));
 
-        service.create(userCreateDto1);
+        UserReadDto userReadDto1 = service.create(userCreateDto1);
 
-        UserReadDto userReadDto1 = service.findById(userCreateDto1.getId()).get();
-
-        assertEquals(userReadDto1.getId(), userCreateDto1.getId());
         assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
         assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
         assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
@@ -32,16 +29,8 @@ class UserCreateDtoTest {
     }
 
     @Test
-    void test1ifIdNullShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(null, "mymail@mail.ru", "myLogin",
-                "MyDisplayName", LocalDate.of(1984,12,12));
-
-        assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
-    }
-
-    @Test
     void test2ifEmailHasWrongTypeShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "yailru", "myLogin",
+        UserCreateDto userCreateDto1 = new UserCreateDto("yailru", "myLogin",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
@@ -49,7 +38,7 @@ class UserCreateDtoTest {
 
     @Test
     void test3ifLoginIsBlankShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
@@ -57,7 +46,7 @@ class UserCreateDtoTest {
 
     @Test
     void test4ifLoginHas2SymbolShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "my",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "my",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
@@ -65,7 +54,7 @@ class UserCreateDtoTest {
 
     @Test
     void test5ifLoginHas11SymbolShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin8911",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin8911",
                 "MyDisplayName", LocalDate.of(1984,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
@@ -73,7 +62,7 @@ class UserCreateDtoTest {
 
     @Test
     void test6ifDisplayNameIsNullShouldThrowViolationException(){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin",
                 null, LocalDate.of(1984,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
@@ -81,7 +70,7 @@ class UserCreateDtoTest {
 
     @Test
     void test7ifBirthdayIsDateOfFutureShouldThrowViolationException (){
-        UserCreateDto userCreateDto1 = new UserCreateDto(1L, "ya@mail.ru", "myLogin",
+        UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "myLogin",
                 "MyDisplayName", LocalDate.of(2500,12,12));
 
         assertThrows(ConstraintViolationException.class, () -> service.create(userCreateDto1));
