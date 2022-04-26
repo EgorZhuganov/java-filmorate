@@ -52,7 +52,7 @@ public class UserService {
                 .map(userCreateMapper::mapFrom)
                 .map(user -> {
                     log.info("user {} was registered", user.getEmail());
-                    return repository.save(user);
+                    return repository.insert(user);
                 })
                 .map(userReadMapper::mapFrom)
                 .orElseThrow();

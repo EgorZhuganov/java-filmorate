@@ -60,7 +60,7 @@ public class FilmService {
                 .map(filmCreateMapper::mapFrom)
                 .map(film -> {
                     log.info("film {} was created", film.getName());
-                    return repository.save(film);
+                    return repository.insert(film);
                 })
                 .map(filmReadMapper::mapFrom)
                 .orElseThrow();
