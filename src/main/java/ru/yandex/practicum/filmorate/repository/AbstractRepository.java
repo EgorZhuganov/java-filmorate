@@ -16,5 +16,5 @@ public interface AbstractRepository<K, T> {
 
     T update(T entity);
 
-    T save (T entity);
+    T insert(T entity);
 }
