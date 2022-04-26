@@ -9,14 +9,14 @@ public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
 
     @Override
     public User mapFrom(UserCreateDto object) {
-        String displayName = object.getDisplayName();
-        if (object.getDisplayName().isBlank())
+        String displayName = object.getName();
+        if (object.getName().isBlank())
             displayName = object.getLogin();
 
         return User.builder()
                 .email(object.getEmail())
                 .login(object.getLogin())
-                .displayName(displayName)
+                .name(displayName)
                 .birthday(object.getBirthday())
                 .build();
     }

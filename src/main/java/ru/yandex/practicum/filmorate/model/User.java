@@ -12,7 +12,7 @@ public class User implements BaseModel<Long> {
     private Long id;
     private String email;
     private String login;
-    private String displayName;
+    private String name;
     private LocalDate birthday;
 
 }

@@ -24,7 +24,7 @@ class UserCreateDtoTest {
 
         assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
         assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
-        assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(userReadDto1.getName(), userCreateDto1.getName());
         assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
     }
 

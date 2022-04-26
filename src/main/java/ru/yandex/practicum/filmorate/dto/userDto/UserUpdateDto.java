@@ -18,10 +18,10 @@ public class UserUpdateDto {
     Long id;
     @Email
     String email;
-    @NotBlank @Size(min = 3, max = 10)
+    @NotBlank
     String login;
     @NotNull
-    String displayName;
+    String name;
     @PastOrPresent
     LocalDate birthday;
 

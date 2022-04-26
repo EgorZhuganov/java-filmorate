@@ -30,7 +30,7 @@ class UserUpdateDtoTest {
 
         assertEquals(updatedUserReadDto.getEmail(), userUpdateDto1.getEmail());
         assertEquals(updatedUserReadDto.getLogin(), userUpdateDto1.getLogin());
-        assertEquals(updatedUserReadDto.getDisplayName(), userUpdateDto1.getDisplayName());
+        assertEquals(updatedUserReadDto.getName(), userUpdateDto1.getName());
         assertEquals(updatedUserReadDto.getBirthday(), userUpdateDto1.getBirthday());
     }
 

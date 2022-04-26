@@ -46,7 +46,7 @@ class UserServiceTest {
         User user = repository.findById(userReadDto1.getId()).get();
 
         assertEquals(user.getLogin(), userCreateDto1.getLogin());
-        assertEquals(user.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(user.getName(), userCreateDto1.getName());
         assertEquals(user.getBirthday(), userCreateDto1.getBirthday());
         assertEquals(user.getEmail(), userCreateDto1.getEmail());
     }
@@ -61,7 +61,7 @@ class UserServiceTest {
         assertEquals(user.getEmail(), userUpdateDto1.getEmail());
         assertEquals(user.getBirthday(), userUpdateDto1.getBirthday());
         assertEquals(user.getLogin(), userUpdateDto1.getLogin());
-        assertEquals(user.getDisplayName(), userUpdateDto1.getDisplayName());
+        assertEquals(user.getName(), userUpdateDto1.getName());
     }
 
     @Test
@@ -83,7 +83,7 @@ class UserServiceTest {
         assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
         assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
         assertEquals(userReadDto1.getEmail(), userCreateDto1.getEmail());
-        assertEquals(userReadDto1.getDisplayName(), userCreateDto1.getDisplayName());
+        assertEquals(userReadDto1.getName(), userCreateDto1.getName());
     }
 
     @Test

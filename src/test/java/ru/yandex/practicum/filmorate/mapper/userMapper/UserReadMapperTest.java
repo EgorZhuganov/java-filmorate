@@ -16,7 +16,7 @@ class UserReadMapperTest {
             .id(1L)
             .email("myMail@mail.ru")
             .login("myLogin")
-            .displayName("myDisplayName")
+            .name("myDisplayName")
             .birthday(LocalDate.of(2000, 1, 1))
             .build();
 
@@ -26,7 +26,7 @@ class UserReadMapperTest {
         assertEquals(user.getId(), userDto.getId());
         assertEquals(user.getEmail(), userDto.getEmail());
         assertEquals(user.getLogin(), userDto.getLogin());
-        assertEquals(user.getDisplayName(), userDto.getDisplayName());
+        assertEquals(user.getName(), userDto.getName());
         assertEquals(user.getBirthday(), userDto.getBirthday());
     }
 }

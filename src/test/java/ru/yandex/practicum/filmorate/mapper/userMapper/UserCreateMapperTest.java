@@ -21,7 +21,7 @@ class UserCreateMapperTest {
 
         assertEquals(userCreateDto1.getEmail(), user.getEmail());
         assertEquals(userCreateDto1.getLogin(), user.getLogin());
-        assertEquals(userCreateDto1.getDisplayName(), user.getDisplayName());
+        assertEquals(userCreateDto1.getName(), user.getName());
         assertEquals(userCreateDto1.getBirthday(), user.getBirthday());
     }
 }

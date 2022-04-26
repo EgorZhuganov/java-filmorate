@@ -10,7 +10,7 @@ public class UserReadDto {
     Long id;
     String email;
     String login; //TODO подумать об удалении после спринта
-    String displayName;
+    String name;
     LocalDate birthday;
 
 }

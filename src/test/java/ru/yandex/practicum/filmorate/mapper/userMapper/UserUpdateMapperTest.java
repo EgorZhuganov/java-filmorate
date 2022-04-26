@@ -16,7 +16,7 @@ class UserUpdateMapperTest {
             .id(1L)
             .email("myMail@mail.ru")
             .login("myLogin")
-            .displayName("myDisplayName")
+            .name("myDisplayName")
             .birthday(LocalDate.of(2000, 1, 1))
             .build();
 
@@ -30,7 +30,7 @@ class UserUpdateMapperTest {
         assertEquals(userUpdateDto.getId(), updatedUser.getId());
         assertEquals(userUpdateDto.getEmail(), updatedUser.getEmail());
         assertEquals(userUpdateDto.getLogin(), updatedUser.getLogin());
-        assertEquals(userUpdateDto.getDisplayName(), updatedUser.getDisplayName());
+        assertEquals(userUpdateDto.getName(), updatedUser.getName());
         assertEquals(userUpdateDto.getBirthday(), updatedUser.getBirthday());
     }
 }
