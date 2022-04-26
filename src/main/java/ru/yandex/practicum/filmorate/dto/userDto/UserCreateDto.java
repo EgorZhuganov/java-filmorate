@@ -14,8 +14,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class UserCreateDto {
 
-    @NotNull
-    Long id; //TODO удалить после спринта id из UserCreateDto
     @Email
     String email;
     @NotBlank @Size(min = 3, max = 10)

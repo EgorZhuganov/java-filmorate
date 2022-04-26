@@ -14,14 +14,12 @@ public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
             displayName = object.getLogin();
 
         return User.builder()
-                .id(object.getId()) //TODO удалить id при создании, поле должно автогенерироваться
                 .email(object.getEmail())
                 .login(object.getLogin())
                 .displayName(displayName)
                 .birthday(object.getBirthday())
                 .build();
     }
-
 
     @Override
     public String getKey() {
