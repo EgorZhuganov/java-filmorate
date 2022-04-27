@@ -17,12 +17,11 @@ class FilmUpdateMapperTest {
             "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
             "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
             LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
-
+    private Film film = Film.builder().build();
     @Test
     void mapFrom() {
-        Film film = mapper.mapFrom(filmUpdateDto1);
+        film = mapper.mapFrom(filmUpdateDto1, film);
 
-        assertEquals(filmUpdateDto1.getId(), film.getId());
         assertEquals(filmUpdateDto1.getName(), film.getName());
         assertEquals(filmUpdateDto1.getDescription(), film.getDescription());
         assertEquals(filmUpdateDto1.getReleaseDate(), film.getReleaseDate());

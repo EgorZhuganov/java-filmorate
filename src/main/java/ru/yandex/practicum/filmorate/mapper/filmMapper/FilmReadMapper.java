@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 @Component
 public class FilmReadMapper implements FilmMapper<Film, FilmReadDto> {
 
-    @Override
     public FilmReadDto mapFrom(Film object) {
         return new FilmReadDto(
                 object.getId(),

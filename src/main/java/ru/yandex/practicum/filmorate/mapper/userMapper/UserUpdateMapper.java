@@ -7,24 +7,16 @@ import ru.yandex.practicum.filmorate.model.User;
 @Component
 public class UserUpdateMapper implements UserMapper<UserUpdateDto, User> {
 
-    @Override
-    public User mapFrom(UserUpdateDto object) {
-        String displayName = object.getName();
-        if (object.getName().isBlank())
-            displayName = object.getLogin();
-
-        return User.builder()
-                .id(object.getId())
-                .email(object.getEmail())
-                .login(object.getLogin())
-                .name(displayName)
-                .birthday(object.getBirthday())
-                .build();
-    }
-
-    @Override
     public User mapFrom(UserUpdateDto fromObject, User toObject) {
-        return mapFrom(fromObject);
+        String name = fromObject.getName();
+        if (fromObject.getName().isBlank())
+            name = fromObject.getLogin();
+
+        toObject.setBirthday(fromObject.getBirthday());
+        toObject.setEmail(fromObject.getEmail());
+        toObject.setLogin(fromObject.getLogin());
+        toObject.setName(name);
+        return toObject;
     }
 
     @Override

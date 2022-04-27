@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.User;
 @Component
 public class UserReadMapper implements UserMapper<User, UserReadDto> {
 
-    @Override
     public UserReadDto mapFrom(User object) {
         return new UserReadDto(
                 object.getId(),

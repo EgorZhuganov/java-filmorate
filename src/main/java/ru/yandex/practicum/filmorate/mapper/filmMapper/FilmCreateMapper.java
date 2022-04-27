@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 @Component
 public class FilmCreateMapper implements FilmMapper<FilmCreateDto, Film> {
 
-    @Override
     public Film mapFrom(FilmCreateDto object) {
         return Film.builder()
                 .name(object.getName())

@@ -27,7 +27,6 @@ class UserUpdateMapperTest {
     void mapFrom() {
         User updatedUser = mapper.mapFrom(userUpdateDto, user);
 
-        assertEquals(userUpdateDto.getId(), updatedUser.getId());
         assertEquals(userUpdateDto.getEmail(), updatedUser.getEmail());
         assertEquals(userUpdateDto.getLogin(), updatedUser.getLogin());
         assertEquals(userUpdateDto.getName(), updatedUser.getName());

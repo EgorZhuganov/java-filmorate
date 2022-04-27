@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.User;
 @Component
 public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
 
-    @Override
     public User mapFrom(UserCreateDto object) {
         String displayName = object.getName();
         if (object.getName().isBlank())

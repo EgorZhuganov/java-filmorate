@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
-import ru.yandex.practicum.filmorate.mapper.Mapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmCreateMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmReadMapper;
@@ -31,7 +30,7 @@ import static java.util.stream.Collectors.toMap;
 public class FilmService {
 
     private final AbstractRepository<Long, Film> repository;
-    private final Map<String, Mapper<?, ?>> mapper;
+    private final Map<String, FilmMapper<?, ?>> mapper;
 
     @Autowired
     public FilmService(AbstractRepository<Long, Film> repository, List<FilmMapper<?, ?>> mappers) {
@@ -71,9 +70,9 @@ public class FilmService {
         var filmUpdateMapper = (FilmUpdateMapper) mapper.get(FilmUpdateMapper.class.getName());
         return repository.findById(id)
                 .map(filmModel -> filmUpdateMapper.mapFrom(filmUpdateDto, filmModel))
-                .map(film -> {
-                    log.info("film {} was updated", film.getName());
-                    return repository.update(film);
+                .map(updatedFilm -> {
+                    log.info("film with id {} was updated", updatedFilm.getId());
+                    return repository.update(updatedFilm);
                 })
                 .map(filmReadMapper::mapFrom);
     }

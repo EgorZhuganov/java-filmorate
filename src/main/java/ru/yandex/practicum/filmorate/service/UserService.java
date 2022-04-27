@@ -63,9 +63,9 @@ public class UserService {
         var userUpdateMapper = (UserUpdateMapper) mapper.get(UserUpdateMapper.class.getName());
         return repository.findById(id)
                 .map(userModel -> userUpdateMapper.mapFrom(userUpdateDto, userModel))
-                .map(user -> {
-                    log.info("user {} was updated", user.getEmail());
-                    return repository.update(user);
+                .map(updatedUser -> {
+                    log.info("user with id {} was updated", updatedUser.getId());
+                    return repository.update(updatedUser);
                 })
                 .map(userReadMapper::mapFrom);
     }
