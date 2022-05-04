@@ -11,9 +11,10 @@ public class UserReadMapper implements UserMapper<User, UserReadDto> {
         return new UserReadDto(
                 object.getId(),
                 object.getEmail(),
-                object.getLogin(), //TODO подумать об удалении login из представления после спринта
+                object.getLogin(),
                 object.getName(),
-                object.getBirthday()
+                object.getBirthday(),
+                object.getFriends()
         );
     }
 
