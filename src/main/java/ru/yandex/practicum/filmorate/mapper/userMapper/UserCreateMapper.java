@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.HashSet;
+
 @Component
 public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
 
@@ -17,6 +19,7 @@ public class UserCreateMapper implements UserMapper<UserCreateDto, User> {
                 .login(object.getLogin())
                 .name(displayName)
                 .birthday(object.getBirthday())
+                .friends(new HashSet<>())
                 .build();
     }
 
