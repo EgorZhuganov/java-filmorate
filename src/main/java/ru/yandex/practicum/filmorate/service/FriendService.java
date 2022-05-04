@@ -55,29 +55,25 @@ public class FriendService {
                         .map(friend -> userReadMapper.mapFrom(friend.get()))
                         .collect(toList())
                 );
-        //.orElseThrow();
     }
 
     public Optional<List<UserReadDto>> findAllCommonFriends(Long userId, Long otherUserId) {
         UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
-        List<UserReadDto> commonFriends = new ArrayList<>();
+        List<UserReadDto> commonFriends = null;
         var maybeUser = repository.findById(userId);
         var maybeOtherUser = repository.findById(otherUserId);
         if (maybeUser.isPresent() && maybeOtherUser.isPresent()) {
-            UserReadDto userDto = userReadMapper.mapFrom(maybeUser.get());
-            UserReadDto otherUser = userReadMapper.mapFrom(maybeOtherUser.get());
-            userDto.getFriends().retainAll(otherUser.getFriends());
-            commonFriends = userDto
-                    .getFriends()
+            Set<Long> userFriends = new HashSet<>(maybeUser.get().getFriends());
+            Set<Long> otherUserFriends = new HashSet<>(maybeOtherUser.get().getFriends());
+            userFriends.retainAll(otherUserFriends);
+            commonFriends = userFriends
                     .stream()
                     .map(repository::findById)
                     .filter(Optional::isPresent)
-                    .map(user -> userReadMapper.mapFrom(user.get()))
+                    .map(commonFriend -> userReadMapper.mapFrom(commonFriend.get()))
                     .collect(toList());
-        } else {
-            return empty();
         }
-        return of(commonFriends);
+        return ofNullable(commonFriends);
     }
 
     public boolean removeFromFriends(Long userId, Long friendId) {
