@@ -76,4 +76,23 @@ public class FilmController {
             throw new ResponseStatusException(NOT_FOUND);
         }
     }
+
+    @PutMapping("/{filmId}/like/{userId}") //пользователь ставит лайк фильму.
+    @ResponseStatus(OK)
+    public FilmReadDto addLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        return filmService.addLike(filmId, userId).orElseThrow(() -> {
+            log.warn("film with id: {} or user with id: {} not found for add like", filmId, userId);
+            return new ResponseStatusException(NOT_FOUND);
+        });
+    }
+
+    @DeleteMapping("/{filmId}/like/{userId}") //пользователь удаляет лайк
+    @ResponseStatus(NO_CONTENT)
+    public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        if (!filmService.removeLike(filmId, userId)) {
+            log.warn("film with id {} or user with id {} not found", filmId, userId);
+            throw new ResponseStatusException(NOT_FOUND);
+        }
+    }
+
 }
