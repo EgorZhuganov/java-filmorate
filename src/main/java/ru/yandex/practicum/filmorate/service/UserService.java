@@ -25,11 +25,13 @@ public class UserService {
 
     private final AbstractRepository<Long, User> repository;
     private final Map<String, UserMapper<?, ?>> mapper;
+    private final FriendService friendService;
 
     @Autowired
-    public UserService(AbstractRepository<Long, User> repository, List<UserMapper<?, ?>> mappers) {
+    public UserService(AbstractRepository<Long, User> repository, List<UserMapper<?, ?>> mappers, FriendService friendService) {
         this.repository = repository;
         this.mapper = mappers.stream().collect(toMap(UserMapper::getKey, Function.identity()));
+        this.friendService = friendService;
     }
 
     public List<UserReadDto> findAll() {
@@ -71,6 +73,14 @@ public class UserService {
     }
 
     public boolean delete(Long id) {
-        return repository.delete(id);
+        var maybeUser = repository.findById(id);
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
+            for (Long friendId : user.getFriends()) {
+                repository.findById(friendId).map(friend -> friendService.removeFromFriends(id, friendId));
+            }
+            return repository.delete(id);
+        }
+        return false;
     }
 }
