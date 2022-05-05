@@ -95,4 +95,11 @@ public class FilmController {
         }
     }
 
+    //popular первые 10 фильмов по количеству лайков.
+    //popular?count={count} список count фильмов по количеству лайков.
+    @GetMapping("/popular")
+    @ResponseStatus(OK)
+    public List<FilmReadDto> findPopularFilmsByLikes(@RequestParam(required = false, defaultValue = "10") Long count) {
+        return filmService.findPopularFilmsByLikes(count);
+    }
 }
