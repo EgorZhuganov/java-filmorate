@@ -35,7 +35,7 @@ jobs:
       - name: Checkout tests
         uses: actions/checkout@v3
         with:
-          repository: 'yandex-praktikum/java-filmorate'
+          repository: 'EgorZhuganov/java-filmorate/tree/add-friends-likes'
           ref: ${{ github.event.pull_request.head.ref }}
           path: tests
 
