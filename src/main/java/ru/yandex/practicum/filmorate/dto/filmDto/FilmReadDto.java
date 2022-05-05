@@ -4,6 +4,7 @@ import lombok.Value;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Value
 public class FilmReadDto {
@@ -13,5 +14,6 @@ public class FilmReadDto {
     String description;
     LocalDate releaseDate;
     Duration duration;
+    Set<Long> likes;
 
 }
