@@ -111,4 +111,16 @@ public class FilmService {
         return false;
     }
 
+    public List<FilmReadDto> findPopularFilmsByLikes(Long count) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        Comparator<Film> comparator = comparingLong(film -> film.getLikes().size());
+        comparator = comparator.thenComparing(Film::getId).reversed();
+
+        return repository.findAll()
+                .stream()
+                .sorted(comparator)
+                .limit(count)
+                .map(filmReadMapper::mapFrom)
+                .collect(toList());
+    }
 }
