@@ -3168,7 +3168,7 @@
 									"    pm.expect(jsonData.name).to.eql('New film');\r",
 									"    pm.expect(jsonData.description).to.eql('New film about friends');    \r",
 									"    pm.expect(jsonData.releaseDate).to.eql('1999-04-30');\r",
-									"    pm.expect(jsonData.duration).to.eql('PT3M10S');\r",
+									"    pm.expect(jsonData.duration).to.eql('PT2M');\r",
 									"});"
 								],
 								"type": "text/javascript"
