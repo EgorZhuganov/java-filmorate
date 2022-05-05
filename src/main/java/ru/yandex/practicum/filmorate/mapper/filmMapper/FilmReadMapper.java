@@ -13,7 +13,8 @@ public class FilmReadMapper implements FilmMapper<Film, FilmReadDto> {
                 object.getName(),
                 object.getDescription(),
                 object.getReleaseDate(),
-                object.getDuration()
+                object.getDuration(),
+                object.getLikes()
         );
     }
 
