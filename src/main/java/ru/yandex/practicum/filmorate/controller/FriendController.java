@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
-import ru.yandex.practicum.filmorate.service.FriendService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
@@ -16,15 +16,14 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class FriendController {
 
-    private final FriendService service;
+    private final UserService service;
 
     @Autowired
-    public FriendController(FriendService service) {
+    public FriendController(UserService service) {
         this.service = service;
     }
 
-    //users/{id}/friends/{friendId} - добавление в друзья.
-    @PutMapping("/{friendId}")
+    @PutMapping("/{friendId}") //add friend
     @ResponseStatus(OK)
     public UserReadDto add(@PathVariable Long id, @PathVariable Long friendId) {
         return service.addToFriends(id, friendId)
@@ -35,8 +34,7 @@ public class FriendController {
                 );
     }
 
-    //users/{id}/friends - возвращаем список друзей пользователя.
-    @GetMapping
+    @GetMapping //return list of friends
     @ResponseStatus(OK)
     public List<UserReadDto> findAll(@PathVariable Long id) {
         return service.findAllFriends(id)
@@ -46,8 +44,7 @@ public class FriendController {
                 });
     }
 
-    //users/{id}/friends/common/{otherId} - список друзей общих с другим пользователем.
-    @GetMapping("/common/{otherUserId}")
+    @GetMapping("/common/{otherUserId}") //return common friends between two users
     @ResponseStatus(OK)
     public List<UserReadDto> findAllCommon(Long id, Long otherUserId) {
         return service.findAllCommonFriends(id, otherUserId)
@@ -58,8 +55,7 @@ public class FriendController {
                 );
     }
 
-    //users/{id}/friends/{friendId} - удаление из друзей.
-    @DeleteMapping("/{friendId}")
+    @DeleteMapping("/{friendId}") //remove from friends
     @ResponseStatus(NO_CONTENT)
     public void remove(@PathVariable Long id, @PathVariable Long friendId) {
         if (!service.removeFromFriends(id, friendId)) {
