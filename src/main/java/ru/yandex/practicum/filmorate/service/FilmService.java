@@ -20,8 +20,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Comparator.*;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toMap;
 
@@ -98,17 +97,18 @@ public class FilmService {
         return ofNullable(filmReadDto);
     }
 
-
-    public boolean removeLike(Long filmId, Long userId) {
+    public Optional<FilmReadDto> removeLike(Long filmId, Long userId) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         var maybeFilm = repository.findById(filmId);
         var maybeUser = userService.findById(userId);
+        FilmReadDto filmReadDto = null;
         if (maybeUser.isPresent() && maybeFilm.isPresent()) {
             Film film = maybeFilm.get();
             film.getLikes().remove(userId);
             repository.update(film);
-            return true;
+            filmReadDto = filmReadMapper.mapFrom(film);
         }
-        return false;
+        return ofNullable(filmReadDto);
     }
 
     //If we have two films with the same count likes, then sorting will be by ID, first - film with bigger id

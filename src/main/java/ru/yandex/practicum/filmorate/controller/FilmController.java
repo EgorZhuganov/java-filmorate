@@ -87,12 +87,12 @@ public class FilmController {
     }
 
     @DeleteMapping("/{filmId}/like/{userId}") //204 NO_CONTENT orElseThrow NOT_FOUND
-    @ResponseStatus(NO_CONTENT)
-    public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
-        if (!filmService.removeLike(filmId, userId)) {
+    @ResponseStatus(OK)
+    public FilmReadDto removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        return filmService.removeLike(filmId, userId).orElseThrow(() -> {
             log.warn("film with id {} or user with id {} not found", filmId, userId);
-            throw new ResponseStatusException(NOT_FOUND);
-        }
+            return new ResponseStatusException(NOT_FOUND);
+        });
     }
 
     //popular  - first 10 films by likes.
