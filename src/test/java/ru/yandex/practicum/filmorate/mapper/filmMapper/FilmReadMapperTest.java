@@ -6,8 +6,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FilmReadMapperTest {
 
@@ -21,6 +23,7 @@ class FilmReadMapperTest {
                     "ЗАГСа, узнает от умирающей тещи...")
             .releaseDate(LocalDate.of(1971, 6, 21))
             .duration(Duration.ofMinutes(161))
+            .likes(new HashSet<>())
             .build();
 
     @Test
@@ -32,5 +35,6 @@ class FilmReadMapperTest {
         assertEquals(filmReadDto1.getDescription(), film.getDescription());
         assertEquals(filmReadDto1.getReleaseDate(), film.getReleaseDate());
         assertEquals(filmReadDto1.getDuration(), film.getDuration());
+        assertThrows(UnsupportedOperationException.class, () ->filmReadDto1.getLikes().add(1L));
     }
 }
