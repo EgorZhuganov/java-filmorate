@@ -22,12 +22,12 @@ public class FilmController {
 
     private final FilmService filmService;
 
-    @GetMapping //200 OK and return List
+    @GetMapping //200 OK
     public List<FilmReadDto> findAll() {
         return filmService.findAll();
     }
 
-    @GetMapping("/{id}") //200, OK orElseThrow NOT_FOUND
+    @GetMapping("/{id}") //200 OK orElseThrow NOT_FOUND
     public FilmReadDto findById(@PathVariable Long id) {
         return filmService
                 .findById(id)
@@ -38,7 +38,7 @@ public class FilmController {
                 );
     }
 
-    @PostMapping //201 and return userReadDto
+    @PostMapping //201 CREATED or BAD_REQUSET
     @ResponseStatus(CREATED)
     public FilmReadDto create(@RequestBody FilmCreateDto film) {
         try {
@@ -68,7 +68,7 @@ public class FilmController {
         }
     }
 
-    @DeleteMapping("/{id}") //204 no content
+    @DeleteMapping("/{id}") //204 NO_CONTENT
     @ResponseStatus(NO_CONTENT)
     public void remove(@PathVariable Long id) {
         if (!filmService.delete(id)) {
@@ -77,7 +77,7 @@ public class FilmController {
         }
     }
 
-    @PutMapping("/{filmId}/like/{userId}") //пользователь ставит лайк фильму.
+    @PutMapping("/{filmId}/like/{userId}") //200 OK orElseThrow NOT_FOUND
     @ResponseStatus(OK)
     public FilmReadDto addLike(@PathVariable Long filmId, @PathVariable Long userId) {
         return filmService.addLike(filmId, userId).orElseThrow(() -> {
@@ -86,7 +86,7 @@ public class FilmController {
         });
     }
 
-    @DeleteMapping("/{filmId}/like/{userId}") //пользователь удаляет лайк
+    @DeleteMapping("/{filmId}/like/{userId}") //204 NO_CONTENT orElseThrow NOT_FOUND
     @ResponseStatus(NO_CONTENT)
     public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
         if (!filmService.removeLike(filmId, userId)) {
@@ -95,11 +95,11 @@ public class FilmController {
         }
     }
 
-    //popular первые 10 фильмов по количеству лайков.
-    //popular?count={count} список count фильмов по количеству лайков.
+    //popular  - first 10 films by likes.
+    //popular?count={count} - list {count} films by likes.
     @GetMapping("/popular")
     @ResponseStatus(OK)
-    public List<FilmReadDto> findPopularFilmsByLikes(@RequestParam(required = false, defaultValue = "10") Long count) {
+    public List<FilmReadDto> findPopularFilmsByLikes(@RequestParam(required = false, defaultValue = "10") int count) {
         return filmService.findPopularFilmsByLikes(count);
     }
 }
