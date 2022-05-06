@@ -13,10 +13,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class FriendServiceTest {
+class UserServiceTestFriendsTest {
 
-    @Autowired
-    private FriendService friendService;
     @Autowired
     private UserService userService;
 
@@ -34,10 +32,9 @@ class FriendServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        userReadDto2 = friendService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
+        userReadDto2 = userService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
 
         assertEquals(1, userReadDto2.getFriends().size());
-        assertEquals(1, userReadDto3.getFriends().size());
         assertEquals(1, userService.findById(userReadDto2.getId()).get().getFriends().size());
         assertEquals(1, userService.findById(userReadDto3.getId()).get().getFriends().size());
     }
@@ -46,7 +43,7 @@ class FriendServiceTest {
     void test2addToFriendsIfUserNotExistInRepositoryShouldReturnEmptyOptional() {
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        Optional<UserReadDto> maybeUser = friendService.addToFriends(100500L, userReadDto3.getId());
+        Optional<UserReadDto> maybeUser = userService.addToFriends(100500L, userReadDto3.getId());
 
         assertEquals(Optional.empty(), maybeUser);
     }
@@ -55,8 +52,8 @@ class FriendServiceTest {
     void test3addToFriendsIfFriendNotExistInRepositoryShouldReturnEmptyOptional() {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
 
-        Optional<UserReadDto> maybeUser1 = friendService.addToFriends(userReadDto2.getId(), 100500L);
-        Optional<UserReadDto> maybeUser2 = friendService.addToFriends(100500L, userReadDto2.getId());
+        Optional<UserReadDto> maybeUser1 = userService.addToFriends(userReadDto2.getId(), 100500L);
+        Optional<UserReadDto> maybeUser2 = userService.addToFriends(100500L, userReadDto2.getId());
 
         assertEquals(Optional.empty(), maybeUser1);
         assertEquals(Optional.empty(), maybeUser2);
@@ -68,15 +65,15 @@ class FriendServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        assertEquals(2, friendService.findAllFriends(userReadDto1.getId()).get().size());
+        assertEquals(2, userService.findAllFriends(userReadDto1.getId()).get().size());
     }
 
     @Test
     void test5findAllFriendsIfTryToFindFriendsInNotExistUserShouldReturnEmptyOptional() {
-        assertEquals(Optional.empty(), friendService.findAllFriends(100500L));
+        assertEquals(Optional.empty(), userService.findAllFriends(100500L));
     }
 
     @Test
@@ -86,13 +83,13 @@ class FriendServiceTest {
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
         UserReadDto userReadDto4 = userService.create(userCreateDto4);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto4.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto2.getId(), userReadDto4.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto4.getId()).orElseThrow();
+        userService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto2.getId(), userReadDto4.getId()).orElseThrow();
 
-        friendService.findAllCommonFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.findAllCommonFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
 
         assertEquals(3, userService.findById(userReadDto1.getId()).orElseThrow().getFriends().size());
     }
@@ -104,13 +101,13 @@ class FriendServiceTest {
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
         UserReadDto userReadDto4 = userService.create(userCreateDto4);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto4.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto2.getId(), userReadDto4.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto4.getId()).orElseThrow();
+        userService.addToFriends(userReadDto2.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto2.getId(), userReadDto4.getId()).orElseThrow();
 
-        List<UserReadDto> commonFriends = friendService.findAllCommonFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        List<UserReadDto> commonFriends = userService.findAllCommonFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
 
         assertEquals(2, commonFriends.size());
     }
@@ -118,8 +115,8 @@ class FriendServiceTest {
     @Test
     void test8findAllCommonFriendsShouldReturnEmptyOptionalIfOneOfUsersNotExist() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
-        var commonFriends1 = friendService.findAllCommonFriends(100500L, userReadDto1.getId());
-        var commonFriends2 = friendService.findAllCommonFriends(userReadDto1.getId(), 100500L);
+        var commonFriends1 = userService.findAllCommonFriends(100500L, userReadDto1.getId());
+        var commonFriends2 = userService.findAllCommonFriends(userReadDto1.getId(), 100500L);
 
         assertEquals(Optional.empty(), commonFriends1);
         assertEquals(Optional.empty(), commonFriends2);
@@ -131,10 +128,10 @@ class FriendServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        assertTrue(friendService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId()));
+        assertTrue(userService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId()));
     }
 
     @Test
@@ -143,10 +140,10 @@ class FriendServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        friendService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId());
+        userService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId());
 
         assertEquals(1, userService.findById(userReadDto1.getId()).orElseThrow().getFriends().size());
         assertFalse(userService.findById(userReadDto1.getId()).orElseThrow().getFriends().contains(userReadDto2.getId()));
@@ -158,10 +155,10 @@ class FriendServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
-        friendService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
+        userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        assertFalse(friendService.removeFromFriends(100500L, userReadDto2.getId()));
-        assertFalse(friendService.removeFromFriends(userReadDto1.getId(), 100500L));
+        assertFalse(userService.removeFromFriends(100500L, userReadDto2.getId()));
+        assertFalse(userService.removeFromFriends(userReadDto1.getId(), 100500L));
     }
 }
