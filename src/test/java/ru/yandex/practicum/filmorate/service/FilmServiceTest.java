@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.*;
@@ -124,7 +125,7 @@ class FilmServiceTest {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
@@ -137,8 +138,8 @@ class FilmServiceTest {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
@@ -147,7 +148,7 @@ class FilmServiceTest {
     void test9addLikeIfUserNotExistShouldReturnEmptyOptionalAndFilmWithoutLikes() {
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        assertEquals(empty(), filmService.addLike(100500L, filmReadDto1.getId()));
+        assertEquals(empty(), filmService.addLike(filmReadDto1.getId(), 100500L));
         assertEquals(0, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
 
@@ -158,7 +159,7 @@ class FilmServiceTest {
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
 
-        assertEquals(empty(), filmService.addLike(userReadDto1.getId(), 100500L));
+        assertEquals(empty(), filmService.addLike(100500L, userReadDto1.getId()));
     }
 
     @Test
@@ -169,14 +170,14 @@ class FilmServiceTest {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
-        filmService.removeLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
+        filmService.removeLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(0, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
 
     @Test
-    void test12removeLikeShouldReturnTrueAnd1LikeIfAddTwoAndRemoveOne() {
+    void test12removeLikeShouldReturnFilmReadDtoWith1LikeIfAddTwoAndRemoveOne() {
         UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
                 "MyDisplayName1", LocalDate.of(1998, 12, 12));
         UserCreateDto userCreateDto2 = new UserCreateDto("other@mail.ru", "login2",
@@ -186,15 +187,16 @@ class FilmServiceTest {
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
-        filmService.addLike(userReadDto2.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto2.getId());
+        var filmReadDto = filmService.removeLike(userReadDto1.getId(), filmReadDto1.getId());
 
-        assertTrue(filmService.removeLike(userReadDto1.getId(), filmReadDto1.getId()));
-        assertEquals(0, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
+        assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
+        assertEquals(1, filmReadDto.get().getLikes().size());
     }
 
     @Test
-    void test13removeLikeShouldReturnFalseIfUserNotExist() {
+    void test13removeLikeIfAddOneLikeShouldReturnEmptyOptionalIfUserNotExistAndDontDeleteLike() {
         UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
                 "MyDisplayName1", LocalDate.of(1998, 12, 12));
 
@@ -203,12 +205,12 @@ class FilmServiceTest {
 
         filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
 
-        assertFalse(filmService.removeLike(100500L, filmReadDto1.getId()));
+        assertEquals(Optional.empty(), filmService.removeLike(filmReadDto1.getId(), 100500L));
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
 
     @Test
-    void test14removeLikeShouldReturnFalseIfFilmNotExist() {
+    void test14removeLikeShouldReturnEmptyOptionalIfFilmNotExistAndDontDeleteLike() {
         UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
                 "MyDisplayName1", LocalDate.of(1998, 12, 12));
 
@@ -217,10 +219,9 @@ class FilmServiceTest {
 
         filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
 
-        assertFalse(filmService.removeLike(userReadDto1.getId(), 100500L));
+        assertEquals(Optional.empty(), filmService.removeLike(100500L, userReadDto1.getId()));
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
     }
-
 
     //+ user
     //+ 2 films
@@ -247,7 +248,6 @@ class FilmServiceTest {
         assertEquals(2, filmReadDtoList.size());
         assertEquals(filmReadDto1.getId(), filmReadDtoList.get(0).getId());
     }
-
 
     //+ user
     //+ 2 films
