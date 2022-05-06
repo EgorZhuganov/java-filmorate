@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
-import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 
 import java.net.URI;
 import java.time.Duration;
@@ -155,8 +154,7 @@ class FilmControllerTest {
 
         mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(filmUpdateDto1AsJson))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(filmUpdateDto1AsJson));
+                .andExpect(status().is2xxSuccessful());
     }
 
     @Test
