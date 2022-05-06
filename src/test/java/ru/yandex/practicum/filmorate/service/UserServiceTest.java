@@ -101,4 +101,22 @@ class UserServiceTest {
 
         assertEquals(3, userReadDtoList.size());
     }
+
+    @Test
+    void test7deleteShouldBreakConnectBetweenTwoUsers() {
+        UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
+                "MyDisplayName1", LocalDate.of(1998, 12, 12));
+        UserCreateDto userCreateDto2 = new UserCreateDto("other@mail.ru", "login2",
+                "MyDisplayName2", LocalDate.of(1998, 12, 12));
+        UserReadDto userReadDto1 = userService.create(userCreateDto1);
+        UserReadDto userReadDto2 = userService.create(userCreateDto2);
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+
+        assertEquals(1, userService.findById(userReadDto1.getId()).get().getFriends().size());
+        assertEquals(1, userService.findById(userReadDto2.getId()).get().getFriends().size());
+
+        userService.delete(userReadDto2.getId());
+
+        assertEquals(0, userService.findById(userReadDto1.getId()).get().getFriends().size());
+    }
 }
