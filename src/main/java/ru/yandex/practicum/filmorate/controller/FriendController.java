@@ -51,7 +51,7 @@ public class FriendController {
 
     @GetMapping("/common/{otherUserId}") //return common friends between two users
     @ResponseStatus(OK)
-    public List<UserReadDto> findAllCommonFriends(Long id, Long otherUserId) {
+    public List<UserReadDto> findAllCommonFriends(@PathVariable Long id, @PathVariable Long otherUserId) {
         return service.findAllCommonFriends(id, otherUserId)
                 .orElseThrow(() -> {
                             log.warn("user with id {} or id {} not found for find common friends", id, otherUserId);
