@@ -323,4 +323,11 @@ class FilmServiceTest {
         assertEquals(2, filmReadDtoList.size());
         assertEquals(filmReadDto1.getId(), filmReadDtoList.get(0).getId());
     }
+
+    @Test
+    void test18findPopularFilmsByLikesIfNoOneFilmExistAndCountIs5ShouldReturn0Films() {
+        List<FilmReadDto> filmReadDtoList = filmService.findPopularFilmsByLikes(5);
+
+        assertEquals(0, filmReadDtoList.size());
+    }
 }
