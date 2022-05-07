@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 
 @Service
@@ -135,9 +135,14 @@ public class UserService {
         return ofNullable(commonFriends);
     }
 
-    public boolean removeFromFriends(Long userId, Long friendId) {
+    public Optional<UserReadDto> removeFromFriends(Long userId, Long friendId) throws UnsupportedOperationException {
+        UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         var maybeUser = repository.findById(userId);
         var maybeFriend = repository.findById(friendId);
+        UserReadDto userReadDto = null;
+        if (userId.equals(friendId)) {
+            throw new UnsupportedOperationException("attempt to remove from friends user with the same id");
+        }
         if (maybeUser.isPresent() && maybeFriend.isPresent()) {
             User user = maybeUser.get();
             User friend = maybeFriend.get();
@@ -145,8 +150,8 @@ public class UserService {
             friend.getFriends().remove(userId);
             repository.update(user);
             repository.update(friend);
-            return true;
+            userReadDto = userReadMapper.mapFrom(user);
         }
-        return false;
+        return ofNullable(userReadDto);
     }
 }
