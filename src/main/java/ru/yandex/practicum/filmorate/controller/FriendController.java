@@ -41,7 +41,7 @@ public class FriendController {
 
     @GetMapping //return list of friends
     @ResponseStatus(OK)
-    public List<UserReadDto> findAll(@PathVariable Long id) {
+    public List<UserReadDto> findAllFriends(@PathVariable Long id) {
         return service.findAllFriends(id)
                 .orElseThrow(() -> {
                     log.warn("user with id {} not found for find all friends", id);
@@ -51,7 +51,7 @@ public class FriendController {
 
     @GetMapping("/common/{otherUserId}") //return common friends between two users
     @ResponseStatus(OK)
-    public List<UserReadDto> findAllCommon(Long id, Long otherUserId) {
+    public List<UserReadDto> findAllCommonFriends(Long id, Long otherUserId) {
         return service.findAllCommonFriends(id, otherUserId)
                 .orElseThrow(() -> {
                             log.warn("user with id {} or id {} not found for find common friends", id, otherUserId);
@@ -61,11 +61,16 @@ public class FriendController {
     }
 
     @DeleteMapping("/{friendId}") //remove from friends
-    @ResponseStatus(NO_CONTENT)
-    public void remove(@PathVariable Long id, @PathVariable Long friendId) {
-        if (!service.removeFromFriends(id, friendId)) {
-            log.warn("user with id {} or friend with id {} not found for unsubscribe", id, friendId);
-            throw new ResponseStatusException(NOT_FOUND);
+    @ResponseStatus(OK)
+    public UserReadDto removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        try {
+            return service.removeFromFriends(id, friendId).orElseThrow(() -> {
+                log.warn("user with id {} or friend with id {} not found for unsubscribe", id, friendId);
+                throw new ResponseStatusException(NOT_FOUND);
+            });
+        } catch (UnsupportedOperationException e) {
+            log.warn("user with id {} was trying remove himself from friends", id);
+            throw new ResponseStatusException(BAD_REQUEST);
         }
     }
 }
