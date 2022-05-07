@@ -25,13 +25,18 @@ public class FriendController {
 
     @PutMapping("/{friendId}") //add friend
     @ResponseStatus(OK)
-    public UserReadDto add(@PathVariable Long id, @PathVariable Long friendId) {
-        return service.addToFriends(id, friendId)
-                .orElseThrow(() -> {
-                            log.warn("user with id {} or id {} not found for add friend", id, friendId);
-                            return new ResponseStatusException(NOT_FOUND);
-                        }
-                );
+    public UserReadDto addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        try {
+            return service.addToFriends(id, friendId)
+                    .orElseThrow(() -> {
+                                log.warn("user with id {} or id {} not found for add friend", id, friendId);
+                                return new ResponseStatusException(NOT_FOUND);
+                            }
+                    );
+        } catch (UnsupportedOperationException e) {
+            log.warn("user with id {} was trying add himself in friends", id);
+            throw new ResponseStatusException(BAD_REQUEST);
+        }
     }
 
     @GetMapping //return list of friends
