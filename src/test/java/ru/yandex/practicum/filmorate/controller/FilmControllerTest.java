@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -16,6 +17,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.net.URI;
 import java.time.Duration;
@@ -23,7 +27,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
 
     FilmControllerTest() throws JsonProcessingException {
@@ -40,23 +46,30 @@ class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    private final URI url = URI.create("http://localhost:8080/films");
-
+    @Autowired
+    private FilmService filmService;
+    private final URI filmUrl = URI.create("http://localhost:8080/films");
+    private final URI userUrl = URI.create("http://localhost:8080/users");
+    private static final Long WRONG_ID = 100500L;
     private FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
             LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
-
-    private String filmAsJson = new ObjectMapper()
+    private final UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
+            "MyDisplayName", LocalDate.of(1998, 12, 12));
+    private final String filmAsJson = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
             .writeValueAsString(filmCreateDto1);
+    private final String userAsJson = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .writeValueAsString(userCreateDto1);
 
     @Test
     void test1createShouldReturnStatusCode201AndFilmReadDtoAsJson() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+        MvcResult mvcResult = mockMvc.perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -71,7 +84,7 @@ class FilmControllerTest {
 
     @Test
     void test2findAllIfRepositoryIsEmpty() throws Exception {
-        mockMvc.perform(get(url))
+        mockMvc.perform(get(filmUrl))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string("[]"));
@@ -80,7 +93,7 @@ class FilmControllerTest {
     @Test
     void test3findAllIfRepositoryHasOneFilmShouldReturnStatus200AndListFilms() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andReturn();
 
         FilmReadDto filmReadDto1 = new ObjectMapper()
@@ -98,7 +111,7 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(filmReadDtoList);
 
-        mockMvc.perform(get(url))
+        mockMvc.perform(get(filmUrl))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string(filmsListAsJson));
@@ -108,7 +121,7 @@ class FilmControllerTest {
     @Test
     void test4findByIdIfRepositoryHasOneFilmWithThisIdShouldReturnFilmAndStatusCode200() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andReturn();
 
         FilmReadDto filmReadDto1 = new ObjectMapper()
@@ -117,7 +130,7 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .readValue(mvcResult.getResponse().getContentAsString(), FilmReadDto.class);
 
-        mockMvc.perform(get(url + "/" + filmReadDto1.getId()))
+        mockMvc.perform(get(filmUrl + "/" + filmReadDto1.getId()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string(mvcResult.getResponse().getContentAsString()));
@@ -125,8 +138,8 @@ class FilmControllerTest {
 
     @Test
     void test5findByIdIfRepositoryHasOneFilmButMeTryFindFilmWithWrongId() throws Exception {
-        mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
-        mockMvc.perform(get(url + "/" + 100500)) //wrong id
+        mockMvc.perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson));
+        mockMvc.perform(get(filmUrl + "/" + WRONG_ID)) //wrong id
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
@@ -135,7 +148,7 @@ class FilmControllerTest {
     @Test
     void test6updateIfRepositoryHasFilmShouldReturnStatusCode204AndFilmAsJson() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andReturn();
         FilmReadDto filmReadDto1 = new ObjectMapper()
                 .registerModule(new ParameterNamesModule())
@@ -152,15 +165,15 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(filmUpdateDto1);
 
-        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(filmUpdateDto1AsJson))
+        mockMvc.perform(put(filmUrl).contentType(APPLICATION_JSON).content(filmUpdateDto1AsJson))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
     }
 
     @Test
     void test7updateTryUpdateFilmWithWrongIdShouldReturnStatusCode404AndEmptyResponse() throws Exception {
-        mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
-        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(100500L, "12 стульев", "Во время " +
+        mockMvc.perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson));
+        FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(WRONG_ID, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
                 LocalDate.of(1971, 6, 21), Duration.ofMinutes(161)); //user with wrong id
@@ -169,7 +182,7 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(filmUpdateDto1);
 
-        mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(filmUpdateDto1AsJson))
+        mockMvc.perform(put(filmUrl).contentType(APPLICATION_JSON).content(filmUpdateDto1AsJson))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
@@ -178,7 +191,7 @@ class FilmControllerTest {
     @Test
     void test8removeIfRepositoryHasFilmShouldDeleteAndReturn204StatusCodeAndEmptyBody() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andReturn();
         FilmReadDto filmReadDto1 = new ObjectMapper()
                 .registerModule(new ParameterNamesModule())
@@ -186,7 +199,7 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .readValue(mvcResult.getResponse().getContentAsString(), FilmReadDto.class);
 
-        mockMvc.perform(delete(url + "/" + filmReadDto1.getId()))
+        mockMvc.perform(delete(filmUrl + "/" + filmReadDto1.getId()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string(""));
@@ -194,8 +207,8 @@ class FilmControllerTest {
 
     @Test
     void test10removeIfRepositoryHasNotFilmWithThisIdShouldReturn404StatusCodeAndEmptyBody() throws Exception {
-        mockMvc.perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson));
-        mockMvc.perform(delete(url + "/" + 100500)) //wrong id
+        mockMvc.perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson));
+        mockMvc.perform(delete(filmUrl + "/" + WRONG_ID)) //wrong id
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string(""));
@@ -214,7 +227,7 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(filmCreateDto1);
 
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(filmUrl)
                         .contentType(APPLICATION_JSON)
                         .content(filmAsJson))
                 .andDo(print())
@@ -224,7 +237,7 @@ class FilmControllerTest {
     @Test
     void test12updateIfRequestHasNotValidFieldsShouldReturnStatusCode400() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(post(url).contentType(APPLICATION_JSON).content(filmAsJson))
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
                 .andReturn();
         FilmReadDto filmReadDto1 = new ObjectMapper()
                 .registerModule(new ParameterNamesModule())
@@ -241,10 +254,224 @@ class FilmControllerTest {
                 .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(filmUpdateDto1);
 
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(filmUrl)
                         .contentType(APPLICATION_JSON)
                         .content(filmUpdateAsJson))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void test13addLikeIfUserAndFilmWereCreatedShouldReturnStatusCode200() throws Exception {
+        MvcResult mvcFilmReadDtoResult = mockMvc
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
+                .andReturn();
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(post(userUrl).contentType(APPLICATION_JSON).content(userAsJson))
+                .andReturn();
+        FilmReadDto filmReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoResult.getResponse().getContentAsString(), FilmReadDto.class);
+        UserReadDto userReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), UserReadDto.class);
+
+        mockMvc.perform(put(URI.create(filmUrl + "/" + filmReadDto1.getId() + "/like/" + userReadDto1.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    void test14addLikeIfUserAndFilmWereCreatedShouldReturnStatusCode200FilmReadDtoWithListLike() throws Exception {
+        MvcResult mvcFilmReadDtoResult = mockMvc
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
+                .andReturn();
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(post(userUrl).contentType(APPLICATION_JSON).content(userAsJson))
+                .andReturn();
+        FilmReadDto filmReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoResult.getResponse().getContentAsString(), FilmReadDto.class);
+        UserReadDto userReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), UserReadDto.class);
+
+        MvcResult mvcFilmReadDtoWithLike = mockMvc
+                .perform(put(URI.create(filmUrl + "/" + filmReadDto1.getId() + "/like/" + userReadDto1.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        FilmReadDto filmReadDto = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoWithLike.getResponse().getContentAsString(), FilmReadDto.class);
+
+        assertEquals(1, filmReadDto.getLikes().size());
+    }
+
+    @Test
+    void test15addLikeIfFilmNotExistShouldReturnStatusCode404() throws Exception {
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(post(userUrl).contentType(APPLICATION_JSON).content(userAsJson))
+                .andReturn();
+        UserReadDto userReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), UserReadDto.class);
+
+        mockMvc.perform(put(URI.create(filmUrl + "/" + WRONG_ID + "/like/" + userReadDto1.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void test16addLikeIfUserNotExistShouldReturnStatusCode404() throws Exception {
+        MvcResult mvcFilmReadDtoResult = mockMvc
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
+                .andReturn();
+        FilmReadDto filmReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoResult.getResponse().getContentAsString(), FilmReadDto.class);
+
+        mockMvc.perform(put(URI.create(filmUrl + "/" + filmReadDto1.getId() + "/like/" + WRONG_ID))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void test17removeLikeIfUserAddLikeToFilmShouldReturnStatusCode200AndRemoveLike() throws Exception {
+        MvcResult mvcFilmReadDtoResult = mockMvc
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
+                .andReturn();
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(post(userUrl).contentType(APPLICATION_JSON).content(userAsJson))
+                .andReturn();
+        FilmReadDto filmReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoResult.getResponse().getContentAsString(), FilmReadDto.class);
+        UserReadDto userReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), UserReadDto.class);
+
+        MvcResult mvcFilmReadDtoWithoutLike = mockMvc
+                .perform(delete(URI.create(filmUrl + "/" + filmReadDto1.getId() + "/like/" + userReadDto1.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        FilmReadDto filmReadDto = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoWithoutLike.getResponse().getContentAsString(), FilmReadDto.class);
+
+        assertEquals(0, filmReadDto.getLikes().size());
+    }
+
+    @Test
+    void test18removeLikeIfUserNotExistShouldReturnStatus404NotFound() throws Exception {
+        MvcResult mvcFilmReadDtoResult = mockMvc
+                .perform(post(filmUrl).contentType(APPLICATION_JSON).content(filmAsJson))
+                .andReturn();
+        FilmReadDto filmReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcFilmReadDtoResult.getResponse().getContentAsString(), FilmReadDto.class);
+
+        mockMvc.perform(delete(URI.create(filmUrl + "/" + filmReadDto1.getId() + "/like/" + WRONG_ID))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    void test19removeLikeIfFilmNotExistShouldStatus404NotFound() throws Exception {
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(post(userUrl).contentType(APPLICATION_JSON).content(userAsJson))
+                .andReturn();
+        UserReadDto userReadDto1 = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), UserReadDto.class);
+
+        mockMvc.perform(delete(URI.create(filmUrl + "/" + WRONG_ID + "/like/" + userReadDto1.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    void test20findPopularFilmsByLikesIfAddMoreThan10FilmsShouldReturnOnly10() throws Exception {
+        for (int i = 0; i < 12; i++) { //create 12 films
+            filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
+                    "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
+                    "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
+                    LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+            filmService.create(filmCreateDto1);
+        }
+
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(get(filmUrl + "/popular").contentType(APPLICATION_JSON))
+                .andReturn();
+
+        List<FilmReadDto> filmReadDtoList = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), new TypeReference<>() {
+                });
+
+        assertEquals(10, filmReadDtoList.size());
+    }
+
+    //if created 12 films, but query param is 5 films, should return 5 films
+    @Test
+    void test21findPopularFilmsByLikes() throws Exception {
+        for (int i = 0; i < 12; i++) { //create 12 films
+            filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
+                    "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
+                    "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
+                    LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+            filmService.create(filmCreateDto1);
+        }
+
+        MvcResult mvcUserReadDtoResult = mockMvc
+                .perform(get(filmUrl + "/popular").param("count", "5").contentType(APPLICATION_JSON))
+                .andReturn();
+
+        List<FilmReadDto> filmReadDtoList = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .readValue(mvcUserReadDtoResult.getResponse().getContentAsString(), new TypeReference<>() {
+                });
+
+        assertEquals(5, filmReadDtoList.size());
     }
 }
