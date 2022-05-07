@@ -15,16 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServiceTestFriendsTest {
 
-    @Autowired
-    private UserService userService;
-
-    UserCreateDto userCreateDto1 = new UserCreateDto("ya1@mail.ru", "login1",
+    @Autowired private UserService userService;
+    private UserCreateDto userCreateDto1 = new UserCreateDto("ya1@mail.ru", "login1",
             "MyDisplayName1", LocalDate.of(1998, 12, 12));
-    UserCreateDto userCreateDto2 = new UserCreateDto("ya2@mail.ru", "login2",
+    private UserCreateDto userCreateDto2 = new UserCreateDto("ya2@mail.ru", "login2",
             "MyDisplayName2", LocalDate.of(1998, 12, 12));
-    UserCreateDto userCreateDto3 = new UserCreateDto("ya3@mail.ru", "login3",
+    private UserCreateDto userCreateDto3 = new UserCreateDto("ya3@mail.ru", "login3",
             "MyDisplayName3", LocalDate.of(1998, 12, 12));
-    UserCreateDto userCreateDto4 = new UserCreateDto("ya4@mail.ru", "login4",
+    private UserCreateDto userCreateDto4 = new UserCreateDto("ya4@mail.ru", "login4",
             "MyDisplayName4", LocalDate.of(1998, 12, 12));
 
     @Test
@@ -60,7 +58,15 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test4findAllFriendsIfAddTwoFriendToUserShouldReturnFriendsSize2() {
+    void test4addToFriendsIfTryAddToUserToHimselfShouldReturnUnsupportedOperationException() {
+        UserReadDto userReadDto2 = userService.create(userCreateDto2);
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> userService.addToFriends(userReadDto2.getId(), userReadDto2.getId()));
+    }
+
+    @Test
+    void test5findAllFriendsIfAddTwoFriendToUserShouldReturnFriendsSize2() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -72,12 +78,12 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test5findAllFriendsIfTryToFindFriendsInNotExistUserShouldReturnEmptyOptional() {
+    void test6findAllFriendsIfTryToFindFriendsInNotExistUserShouldReturnEmptyOptional() {
         assertEquals(Optional.empty(), userService.findAllFriends(100500L));
     }
 
     @Test
-    void test6findAllCommonFriendsIfUseThisMethodShouldReturnFromUserAllFriendsWhichWereAdded() {
+    void test7findAllCommonFriendsIfUseThisMethodShouldReturnFromUserAllFriendsWhichWereAdded() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -95,7 +101,7 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test7findAllCommonFriendsIfUsersHaveTwoCommonFriendsShouldReturnTwoCommonFriendsAsListUserReadDto() {
+    void test8findAllCommonFriendsIfUsersHaveTwoCommonFriendsShouldReturnTwoCommonFriendsAsListUserReadDto() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -113,7 +119,7 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test8findAllCommonFriendsShouldReturnEmptyOptionalIfOneOfUsersNotExist() {
+    void test9findAllCommonFriendsShouldReturnEmptyOptionalIfOneOfUsersNotExist() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         var commonFriends1 = userService.findAllCommonFriends(100500L, userReadDto1.getId());
         var commonFriends2 = userService.findAllCommonFriends(userReadDto1.getId(), 100500L);
@@ -123,7 +129,7 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test9removeFromFriendsIfUsersIdsAreCorrectShouldReturnTrue() {
+    void test10removeFromFriendsIfUserAddedTwoFriendsShouldReturnUserReadDtoWithOneFriend() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -131,11 +137,13 @@ class UserServiceTestFriendsTest {
         userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
         userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        assertTrue(userService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId()));
+        UserReadDto updatedUserReadDto = userService.removeFromFriends(userReadDto1.getId(), userReadDto2.getId()).get();
+
+        assertEquals(1, updatedUserReadDto.getFriends().size());
     }
 
     @Test
-    void test10removeFromFriendsIfUsersIdsAreCorrectShouldReturnListFriendsWithoutRemovedUser() {
+    void test11removeFromFriendsIfUsersIdsAreCorrectShouldReturnListFriendsWithoutRemovedUser() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -150,7 +158,7 @@ class UserServiceTestFriendsTest {
     }
 
     @Test
-    void test11removeFromFriendsIfUserNotExistShouldReturnFalse() {
+    void test12removeFromFriendsIfUserNotExistShouldReturnFalseEmptyOptional() {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
@@ -158,7 +166,7 @@ class UserServiceTestFriendsTest {
         userService.addToFriends(userReadDto1.getId(), userReadDto2.getId()).orElseThrow();
         userService.addToFriends(userReadDto1.getId(), userReadDto3.getId()).orElseThrow();
 
-        assertFalse(userService.removeFromFriends(100500L, userReadDto2.getId()));
-        assertFalse(userService.removeFromFriends(userReadDto1.getId(), 100500L));
+        assertEquals(Optional.empty(), userService.removeFromFriends(100500L, userReadDto2.getId()));
+        assertEquals(Optional.empty(), userService.removeFromFriends(userReadDto1.getId(), 100500L));
     }
 }
