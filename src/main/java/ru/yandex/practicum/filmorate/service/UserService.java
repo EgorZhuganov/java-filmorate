@@ -49,7 +49,7 @@ public class UserService {
     public UserReadDto create(@Valid UserCreateDto userCreateDto) throws ConstraintViolationException {
         var userCreateMapper = (UserCreateMapper) mapper.get(UserCreateMapper.class.getName());
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
-        return Optional.of(userCreateDto)
+        return of(userCreateDto)
                 .map(userCreateMapper::mapFrom)
                 .map(user -> {
                     log.info("user {} was registered", user.getEmail());
@@ -83,11 +83,14 @@ public class UserService {
         return false;
     }
 
-    public Optional<UserReadDto> addToFriends(Long userId, Long friendId) {
+    public Optional<UserReadDto> addToFriends(Long userId, Long friendId) throws UnsupportedOperationException {
         UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
         var maybeUser = repository.findById(userId);
         var maybeFriend = repository.findById(friendId);
         UserReadDto userReadDto = null;
+        if (userId.equals(friendId)) {
+            throw new UnsupportedOperationException("attempt to add in friends user with the same id");
+        }
         if (maybeUser.isPresent() && maybeFriend.isPresent()) {
             User user = maybeUser.get();
             User friend = maybeFriend.get();
