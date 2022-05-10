@@ -38,17 +38,13 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     private final URI url = URI.create("http://localhost:8080/users");
-
     private final UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
-
     private String userAsJson = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .writeValueAsString(userCreateDto1);
-
 
     @Test
     void test1createShouldReturnStatusCode201AndReturnUserReadDtoAsJson() throws Exception {
@@ -145,8 +141,7 @@ class UserControllerTest {
 
         mockMvc.perform(put(url).contentType(APPLICATION_JSON).content(userUpdateDto1AsJson))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(userUpdateDto1AsJson));
+                .andExpect(status().is2xxSuccessful());
     }
 
     @Test

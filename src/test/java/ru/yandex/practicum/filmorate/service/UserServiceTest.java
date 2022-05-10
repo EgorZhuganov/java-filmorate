@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
     @Autowired
-    UserService service;
+    private UserService userService;
     @Autowired
-    AbstractRepository<Long, User> repository;
+    private AbstractRepository<Long, User> repository;
 
     private UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
@@ -32,7 +32,7 @@ class UserServiceTest {
 
     @Test
     void test1createOneUserShouldReturnFromRepositoryOneUser() {
-        service.create(userCreateDto1);
+        userService.create(userCreateDto1);
 
         repository.findAll();
 
@@ -41,7 +41,7 @@ class UserServiceTest {
 
     @Test
     void test2createOneUserShouldReturnFromRepositoryUserWithEqualsFields() {
-        UserReadDto userReadDto1 = service.create(userCreateDto1);
+        UserReadDto userReadDto1 = userService.create(userCreateDto1);
 
         User user = repository.findById(userReadDto1.getId()).get();
 
@@ -53,9 +53,9 @@ class UserServiceTest {
 
     @Test
     void test3updateShouldUpdateUserInRepositoryAndReturnEqualsFields() {
-        UserReadDto userReadDto = service.create(userCreateDto1);
+        UserReadDto userReadDto = userService.create(userCreateDto1);
 
-        service.update(userReadDto.getId(), userUpdateDto1);
+        userService.update(userReadDto.getId(), userUpdateDto1);
         User user = repository.findById(userReadDto.getId()).get();
 
         assertEquals(user.getEmail(), userUpdateDto1.getEmail());
@@ -66,9 +66,9 @@ class UserServiceTest {
 
     @Test
     void test4deleteShouldReturnOptionalEmptyAnd0UsersFromRepository() {
-        UserReadDto userReadDto = service.create(userCreateDto1);
+        UserReadDto userReadDto = userService.create(userCreateDto1);
 
-        service.delete(userReadDto.getId());
+        userService.delete(userReadDto.getId());
 
         assertEquals(Optional.empty(), repository.findById(userReadDto.getId()));
         assertEquals(0, repository.findAll().size());
@@ -76,9 +76,9 @@ class UserServiceTest {
 
     @Test
     void test5findByIdShouldReturnUserReadDtoWithTheSameFields() {
-        UserReadDto userReadDto = service.create(userCreateDto1);
+        UserReadDto userReadDto = userService.create(userCreateDto1);
 
-        UserReadDto userReadDto1 = service.findById(userReadDto.getId()).get();
+        UserReadDto userReadDto1 = userService.findById(userReadDto.getId()).get();
 
         assertEquals(userReadDto1.getBirthday(), userCreateDto1.getBirthday());
         assertEquals(userReadDto1.getLogin(), userCreateDto1.getLogin());
@@ -93,12 +93,30 @@ class UserServiceTest {
         UserCreateDto userCreateDto3 = new UserCreateDto("other@mail.ru", "login2",
                 "MyDisplayName2", LocalDate.of(1998, 12, 12));
 
-        UserReadDto userReadDto1 = service.create(userCreateDto1);
-        UserReadDto userReadDto2 = service.create(userCreateDto2);
-        UserReadDto userReadDto3 = service.create(userCreateDto3);
+        UserReadDto userReadDto1 = userService.create(userCreateDto1);
+        UserReadDto userReadDto2 = userService.create(userCreateDto2);
+        UserReadDto userReadDto3 = userService.create(userCreateDto3);
 
-        List<UserReadDto> userReadDtoList = service.findAll();
+        List<UserReadDto> userReadDtoList = userService.findAll();
 
         assertEquals(3, userReadDtoList.size());
+    }
+
+    @Test
+    void test7deleteShouldBreakConnectBetweenTwoUsers() {
+        UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
+                "MyDisplayName1", LocalDate.of(1998, 12, 12));
+        UserCreateDto userCreateDto2 = new UserCreateDto("other@mail.ru", "login2",
+                "MyDisplayName2", LocalDate.of(1998, 12, 12));
+        UserReadDto userReadDto1 = userService.create(userCreateDto1);
+        UserReadDto userReadDto2 = userService.create(userCreateDto2);
+        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+
+        assertEquals(1, userService.findById(userReadDto1.getId()).get().getFriends().size());
+        assertEquals(1, userService.findById(userReadDto2.getId()).get().getFriends().size());
+
+        userService.delete(userReadDto2.getId());
+
+        assertEquals(0, userService.findById(userReadDto1.getId()).get().getFriends().size());
     }
 }

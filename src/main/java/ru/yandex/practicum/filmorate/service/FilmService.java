@@ -16,11 +16,11 @@ import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
+import static java.util.Comparator.*;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toMap;
 
@@ -31,11 +31,13 @@ public class FilmService {
 
     private final AbstractRepository<Long, Film> repository;
     private final Map<String, FilmMapper<?, ?>> mapper;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(AbstractRepository<Long, Film> repository, List<FilmMapper<?, ?>> mappers) {
+    public FilmService(AbstractRepository<Long, Film> repository, List<FilmMapper<?, ?>> mappers, UserService userService) {
         this.repository = repository;
         this.mapper = mappers.stream().collect(toMap(FilmMapper::getKey, Function.identity()));
+        this.userService = userService;
     }
 
 
@@ -55,7 +57,7 @@ public class FilmService {
     public FilmReadDto create(@Valid FilmCreateDto filmCreateDto) throws ConstraintViolationException {
         var filmCreateMapper = (FilmCreateMapper) mapper.get(FilmCreateMapper.class.getName());
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
-        return Optional.of(filmCreateDto)
+        return of(filmCreateDto)
                 .map(filmCreateMapper::mapFrom)
                 .map(film -> {
                     log.info("film {} was created", film.getName());
@@ -79,5 +81,47 @@ public class FilmService {
 
     public boolean delete(Long id) {
         return repository.delete(id);
+    }
+
+    public Optional<FilmReadDto> addLike(Long filmId, Long userId) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        var maybeFilm = repository.findById(filmId);
+        var maybeUser = userService.findById(userId);
+        FilmReadDto filmReadDto = null;
+        if (maybeUser.isPresent() && maybeFilm.isPresent()) {
+            Film film = maybeFilm.get();
+            film.getLikes().add(userId);
+            repository.update(film);
+            filmReadDto = filmReadMapper.mapFrom(film);
+        }
+        return ofNullable(filmReadDto);
+    }
+
+    public Optional<FilmReadDto> removeLike(Long filmId, Long userId) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        var maybeFilm = repository.findById(filmId);
+        var maybeUser = userService.findById(userId);
+        FilmReadDto filmReadDto = null;
+        if (maybeUser.isPresent() && maybeFilm.isPresent()) {
+            Film film = maybeFilm.get();
+            film.getLikes().remove(userId);
+            repository.update(film);
+            filmReadDto = filmReadMapper.mapFrom(film);
+        }
+        return ofNullable(filmReadDto);
+    }
+
+    //If we have two films with the same count likes, then sorting will be by ID, first - film with bigger id
+    public List<FilmReadDto> findPopularFilmsByLikes(int count) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        Comparator<Film> comparator = comparingLong(film -> film.getLikes().size());
+        comparator = comparator.thenComparing(Film::getId).reversed();
+
+        return repository.findAll()
+                .stream()
+                .sorted(comparator)
+                .limit(count)
+                .map(filmReadMapper::mapFrom)
+                .collect(toList());
     }
 }

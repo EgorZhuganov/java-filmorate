@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 
 @Service
@@ -48,7 +49,7 @@ public class UserService {
     public UserReadDto create(@Valid UserCreateDto userCreateDto) throws ConstraintViolationException {
         var userCreateMapper = (UserCreateMapper) mapper.get(UserCreateMapper.class.getName());
         var userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
-        return Optional.of(userCreateDto)
+        return of(userCreateDto)
                 .map(userCreateMapper::mapFrom)
                 .map(user -> {
                     log.info("user {} was registered", user.getEmail());
@@ -71,6 +72,86 @@ public class UserService {
     }
 
     public boolean delete(Long id) {
-        return repository.delete(id);
+        var maybeUser = repository.findById(id);
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
+            for (Long friendId : user.getFriends()) {
+                repository.findById(friendId).map(friend -> removeFromFriends(id, friendId));
+            }
+            return repository.delete(id);
+        }
+        return false;
+    }
+
+    public Optional<UserReadDto> addToFriends(Long userId, Long friendId) throws UnsupportedOperationException {
+        UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
+        var maybeUser = repository.findById(userId);
+        var maybeFriend = repository.findById(friendId);
+        UserReadDto userReadDto = null;
+        if (userId.equals(friendId)) {
+            throw new UnsupportedOperationException("attempt to add in friends user with the same id");
+        }
+        if (maybeUser.isPresent() && maybeFriend.isPresent()) {
+            User user = maybeUser.get();
+            User friend = maybeFriend.get();
+            user.getFriends().add(friend.getId());
+            friend.getFriends().add(user.getId());
+            repository.update(user);
+            repository.update(friend);
+            userReadDto = userReadMapper.mapFrom(user);
+        }
+        return ofNullable(userReadDto);
+    }
+
+    public Optional<List<UserReadDto>> findAllFriends(Long userId) {
+        UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
+        return repository.findById(userId)
+                .map(user -> user
+                        .getFriends()
+                        .stream()
+                        .map(repository::findById)
+                        .filter(Optional::isPresent)
+                        .map(friend -> userReadMapper.mapFrom(friend.get()))
+                        .collect(toList())
+                );
+    }
+
+    public Optional<List<UserReadDto>> findAllCommonFriends(Long userId, Long otherUserId) {
+        UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
+        List<UserReadDto> commonFriends = null;
+        var maybeUser = repository.findById(userId);
+        var maybeOtherUser = repository.findById(otherUserId);
+        if (maybeUser.isPresent() && maybeOtherUser.isPresent()) {
+            Set<Long> userFriends = new HashSet<>(maybeUser.get().getFriends());
+            Set<Long> otherUserFriends = new HashSet<>(maybeOtherUser.get().getFriends());
+            userFriends.retainAll(otherUserFriends);
+            commonFriends = userFriends
+                    .stream()
+                    .map(repository::findById)
+                    .filter(Optional::isPresent)
+                    .map(commonFriend -> userReadMapper.mapFrom(commonFriend.get()))
+                    .collect(toList());
+        }
+        return ofNullable(commonFriends);
+    }
+
+    public Optional<UserReadDto> removeFromFriends(Long userId, Long friendId) throws UnsupportedOperationException {
+        UserReadMapper userReadMapper = (UserReadMapper) mapper.get(UserReadMapper.class.getName());
+        var maybeUser = repository.findById(userId);
+        var maybeFriend = repository.findById(friendId);
+        UserReadDto userReadDto = null;
+        if (userId.equals(friendId)) {
+            throw new UnsupportedOperationException("attempt to remove from friends user with the same id");
+        }
+        if (maybeUser.isPresent() && maybeFriend.isPresent()) {
+            User user = maybeUser.get();
+            User friend = maybeFriend.get();
+            user.getFriends().remove(friendId);
+            friend.getFriends().remove(userId);
+            repository.update(user);
+            repository.update(friend);
+            userReadDto = userReadMapper.mapFrom(user);
+        }
+        return ofNullable(userReadDto);
     }
 }

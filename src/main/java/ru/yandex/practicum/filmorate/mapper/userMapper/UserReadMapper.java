@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.model.User;
 
+import static java.util.Set.copyOf;
+
 @Component
 public class UserReadMapper implements UserMapper<User, UserReadDto> {
 
@@ -11,9 +13,10 @@ public class UserReadMapper implements UserMapper<User, UserReadDto> {
         return new UserReadDto(
                 object.getId(),
                 object.getEmail(),
-                object.getLogin(), //TODO подумать об удалении login из представления после спринта
+                object.getLogin(),
                 object.getName(),
-                object.getBirthday()
+                object.getBirthday(),
+                copyOf(object.getFriends())
         );
     }
 
