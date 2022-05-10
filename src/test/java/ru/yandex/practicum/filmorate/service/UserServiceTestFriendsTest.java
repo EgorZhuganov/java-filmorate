@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServiceTestFriendsTest {
 
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
     private UserCreateDto userCreateDto1 = new UserCreateDto("ya1@mail.ru", "login1",
             "MyDisplayName1", LocalDate.of(1998, 12, 12));
     private UserCreateDto userCreateDto2 = new UserCreateDto("ya2@mail.ru", "login2",
