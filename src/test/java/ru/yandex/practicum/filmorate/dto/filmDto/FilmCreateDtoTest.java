@@ -108,11 +108,11 @@ class FilmCreateDtoTest {
     }
 
     @Test
-    void test9ifDurationMoreThen1SecondShouldCreateFilm() {
+    void test9ifDurationMoreThen1MinuteShouldCreateFilm() {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 стульев", "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(1971, 6, 21), Duration.ofSeconds(2));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(2));
 
         assertDoesNotThrow(() -> service.create(filmCreateDto1));
     }
