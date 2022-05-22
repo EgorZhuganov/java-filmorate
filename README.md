@@ -20,3 +20,7 @@
 - Maven
 - Spring (SpringBoot, SprintTest, SpringValidation)
 - JUnit 5
+
+## Отношение
+
+![relashionship](https://user-images.githubusercontent.com/85733978/169698508-608692b1-62fe-45c7-b5ed-29945a8a4456.png)

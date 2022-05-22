@@ -28,6 +28,6 @@ public class FilmCreateDto {
     String description;
     @IsAfter(minDate = DATE_OF_RELEASE_FIRST_FILM)
     LocalDate releaseDate;
-    @DurationMin(seconds = 1)
+    @DurationMin(minutes = 1)
     Duration duration;
 }

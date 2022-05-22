@@ -38,7 +38,7 @@ public class FilmController {
                 );
     }
 
-    @PostMapping //201 CREATED or BAD_REQUSET
+    @PostMapping //201 CREATED or BAD_REQUEST
     @ResponseStatus(CREATED)
     public FilmReadDto create(@RequestBody FilmCreateDto film) {
         try {
