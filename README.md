@@ -22,4 +22,5 @@
 - JUnit 5
 
 ## Отношение
-![relashionship](https://user-images.githubusercontent.com/85733978/169650279-92cd6599-3a95-40c1-9a5d-d909d677bb1a.png)
+
+![relashionship](https://user-images.githubusercontent.com/85733978/169698508-608692b1-62fe-45c7-b5ed-29945a8a4456.png)
