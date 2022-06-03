@@ -16,6 +16,7 @@ public class Film implements BaseModel<Long> {
     private String description;
     private LocalDate releaseDate;
     private Duration duration;
+    private MpaRating mpaRating;
     private Set<Long> likes;
 
 }
