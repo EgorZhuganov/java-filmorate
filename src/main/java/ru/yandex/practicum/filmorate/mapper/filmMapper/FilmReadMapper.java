@@ -16,6 +16,7 @@ public class FilmReadMapper implements FilmMapper<Film, FilmReadDto> {
                 object.getDescription(),
                 object.getReleaseDate(),
                 object.getDuration(),
+                object.getMpaRating().getId(),
                 copyOf(object.getLikes())
         );
     }
