@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dto.filmDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.time.DurationMin;
+import ru.yandex.practicum.filmorate.validation.annotation.BetweenNumber;
 import ru.yandex.practicum.filmorate.validation.annotation.IsAfter;
 
 import javax.validation.constraints.NotBlank;
@@ -31,5 +32,7 @@ public class FilmUpdateDto {
     LocalDate releaseDate;
     @DurationMin(seconds = 1)
     Duration duration;
+    @NotNull @BetweenNumber(min = 1, max = 5)
+    Long mpaId;
 
 }

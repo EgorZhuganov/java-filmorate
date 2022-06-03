@@ -14,6 +14,7 @@ public class FilmReadDto {
     String description;
     LocalDate releaseDate;
     Duration duration;
+    Long mpaId;
     Set<Long> likes;
 
 }
