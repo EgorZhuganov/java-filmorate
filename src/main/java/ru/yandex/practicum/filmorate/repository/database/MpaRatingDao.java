@@ -20,16 +20,13 @@ public class MpaRatingDao {
 
     public MpaRating findById(Long mpaId) {
         SqlRowSet mpaRatingAsRowSet = jdbcTemplate.queryForRowSet(FIND_MPA_BY_ID, mpaId);
-        MpaRating mpaRating;
         if (mpaRatingAsRowSet.next()) {
-            mpaRating = MpaRating.builder()
+            return MpaRating.builder()
                     .id(mpaRatingAsRowSet.getLong("mpa_id"))
                     .name(mpaRatingAsRowSet.getString("name"))
                     .build();
-        } else {
-            throw new IllegalArgumentException("Mpa with this id is not exist");
         }
-        return mpaRating;
+        throw new IllegalArgumentException("Mpa with this id is not exist");
     }
 
 }
