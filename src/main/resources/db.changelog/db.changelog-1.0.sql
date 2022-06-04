@@ -1,13 +1,13 @@
 --liquibase formatted sql
 
 --changeset zhuganov:1
-create table genre
+create table if not exists genre
 (
     genre_id smallserial primary key,
     name     varchar(30) not null
 );
 --changeset zhuganov:2
-create table users
+create table if not exists users
 (
     user_id  bigserial primary key,
     email    varchar(128) not null unique,
@@ -16,7 +16,7 @@ create table users
     birthday date         not null
 );
 --changeset zhuganov:3
-create table user_friend
+create table if not exists user_friend
 (
     id        bigserial primary key,
     user_id   bigint references users (user_id) not null,
@@ -26,17 +26,17 @@ create table user_friend
 
 );
 --changeset zhuganov:4
-create table film
+create table if not exists film
 (
     film_id      bigserial primary key,
-    name         varchar(150)    not null,
-    description  varchar(200)    not null,
-    release_date date            not null check ( release_date > '1895-12-28'),
-    duration     interval minute not null check ( duration > '1' ),
-    rating       varchar(6)      not null
+    name         varchar(150) not null,
+    description  varchar(200) not null,
+    release_date date         not null check ( release_date > '1895-12-28'),
+    duration     int          not null check ( duration > '1' ),
+    rating       varchar(6)   not null
 );
 --changeset zhuganov:5
-create table likes
+create table if not exists likes
 (
     id      bigserial primary key,
     user_id bigint references users (user_id) not null,
@@ -45,7 +45,7 @@ create table likes
 
 );
 --changeset zhuganov:6
-create table film_genre
+create table if not exists film_genre
 (
     id       bigserial primary key,
     film_id  bigint references film (film_id)     not null,
