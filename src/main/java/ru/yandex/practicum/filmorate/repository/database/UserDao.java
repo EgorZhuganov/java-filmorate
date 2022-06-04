@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.AbstractRepository;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -16,50 +17,41 @@ import static java.util.Optional.ofNullable;
 
 @Component
 @RequiredArgsConstructor
-public class UserDao implements Dao<Long, User> {
+public class UserDao implements AbstractRepository<Long, User> {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FriendDao friendDao;
     private static final String DELETE_SQL = """
-            DELETE FROM USERS
-            WHERE  USER_ID = ?
+            DELETE FROM users
+            WHERE  user_id = ?
             """;
-
     private static final String INSERT_SQL = """
-            INSERT INTO USERS (EMAIL, LOGIN, NAME, BIRTHDAY)
+            INSERT INTO users (email, login, name, birthday)
             VALUES (?,?,?,?);
             """;
-
     private static final String UPDATE_SQL = """
-            UPDATE USERS
-            SET NAME = ?,
-                EMAIL = ?,
-                LOGIN = ?,
-                BIRTHDAY = ?
-            WHERE USER_ID = ?;
+            UPDATE users
+            SET name = ?,
+                email = ?,
+                login = ?,
+                birthday = ?
+            WHERE user_id = ?;
             """;
-
     private static final String FIND_BY_ID_SQL = """
-            SELECT EMAIL,
-                   LOGIN,
-                   NAME,
-                   BIRTHDAY
-            FROM USERS
-            WHERE USER_ID = ?;
+            SELECT user_id, email, login, name, birthday
+            FROM users
+            WHERE user_id = ?;
             """;
-
-    private static final String FIND_ALL_FRIENDS = """
-            SELECT USER_ID
-            FROM USERS
-            WHERE USER_ID IN (SELECT uf.FRIEND_ID
-                             FROM USER_FRIEND uf
-                             WHERE USER_ID = ?);
+    private static final String FIND_ALL_USERS_SQL = """
+            SELECT user_id, email, login, name, birthday
+            FROM users;
             """;
 
     @Override
     public User insert(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(INSERT_SQL, new String[]{"FILM_ID"});
+            PreparedStatement stmt = connection.prepareStatement(INSERT_SQL, new String[]{"user_id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
             stmt.setObject(3, user.getName());
@@ -73,6 +65,7 @@ public class UserDao implements Dao<Long, User> {
 
     @Override
     public boolean delete(Long id) {
+        friendDao.deleteAllFriends(id);
         return jdbcTemplate.update(DELETE_SQL, id) > 0;
     }
 
@@ -82,31 +75,46 @@ public class UserDao implements Dao<Long, User> {
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),
-                user.getBirthday()
+                user.getBirthday(),
+                user.getId()
         );
         return user;
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        SqlRowSet userAsRowSet = jdbcTemplate.queryForRowSet(FIND_BY_ID_SQL);
-        SqlRowSet friendsAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_FRIENDS);
+        SqlRowSet userAsRowSet = jdbcTemplate.queryForRowSet(FIND_BY_ID_SQL, id);
         User user = null;
-        Set<Long> friendsList = new HashSet<>();
-        if (friendsAsRowSet.next()) {
-            Long friendId = friendsAsRowSet.getLong("USER_ID");
-            friendsList.add(friendId);
-        }
-
         if (userAsRowSet.next()) {
             user = User.builder()
-                    .email(userAsRowSet.getString("name"))
+                    .id(userAsRowSet.getLong("user_id"))
+                    .email(userAsRowSet.getString("email"))
                     .login(userAsRowSet.getString("login"))
                     .name(userAsRowSet.getString("name"))
                     .birthday(userAsRowSet.getDate("birthday").toLocalDate())
-                    .friends(friendsList)
                     .build();
+
+            user.setFriends(new HashSet<>(friendDao.findAllFriend(user.getId())));
         }
         return ofNullable(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        SqlRowSet userAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_USERS_SQL);
+        List<User> usersList = new ArrayList<>();
+        while (userAsRowSet.next()) {
+            User user = User.builder()
+                    .id(userAsRowSet.getLong("user_id"))
+                    .email(userAsRowSet.getString("email"))
+                    .login(userAsRowSet.getString("login"))
+                    .name(userAsRowSet.getString("name"))
+                    .birthday(userAsRowSet.getDate("birthday").toLocalDate())
+                    .build();
+
+            user.setFriends(new HashSet<>(friendDao.findAllFriend(user.getId())));
+            usersList.add(user);
+        }
+        return usersList;
     }
 }
