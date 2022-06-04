@@ -7,18 +7,19 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repository.AbstractRepository;
+import ru.yandex.practicum.filmorate.repository.database.abstraction.FilmRepository;
 
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.time.Duration.ofSeconds;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.of;
 
 @Component
 @RequiredArgsConstructor
-public class FilmDao implements AbstractRepository<Long, Film> {
+public class FilmDao implements FilmRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final MpaRatingDao mpaRatingDao;
@@ -41,12 +42,7 @@ public class FilmDao implements AbstractRepository<Long, Film> {
             WHERE film_id = ?;
             """;
     private static final String FIND_BY_ID_SQL = """
-            SELECT film_id,
-                   name,
-                   description,
-                   release_date,
-                   duration,
-                   mpa_id
+            SELECT film_id, name, description, release_date, duration, mpa_id
             FROM film
             WHERE film_id = ?;
             """;
@@ -58,19 +54,29 @@ public class FilmDao implements AbstractRepository<Long, Film> {
                               WHERE film_id = ?);
             """;
     private static final String FIND_ALL_FILMS_SQL = """
-            SELECT film_id,
-                   name,
-                   description,
-                   release_date,
-                   duration,
-                   mpa_id
+            SELECT film_id, name, description, release_date, duration, mpa_id
             FROM film;
+            """;
+    private static final String INSERT_LIKE_INTO_FILM_SQL = """
+            INSERT INTO likes (user_id, film_id)
+            VALUES (?, ?);
+            """;
+    public static final String DELETE_LIKE_FROM_FILM_SQL = """
+            DELETE FROM likes
+            WHERE user_id = ? and film_id = ?;
+            """;
+    public static final String FIND_N_POPULAR_FILMS_BY_LIKES = """
+            SELECT f.film_id, name, description, release_date, duration, mpa_id
+            FROM film f
+                     LEFT JOIN likes l on f.film_id = l.film_id
+            GROUP BY f.film_id
+            ORDER BY count(l.user_id) desc
+            LIMIT ?;
             """;
 
     @Override
     public Film insert(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(INSERT_SQL, new String[]{"film_id"});
             stmt.setString(1, film.getName());
@@ -87,54 +93,41 @@ public class FilmDao implements AbstractRepository<Long, Film> {
 
     @Override
     public Optional<Film> findById(Long id) {
-        SqlRowSet likesAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_LIKES_SQL, id);
-        Set<Long> likes = new HashSet<>();
-        while (likesAsRowSet.next()) {
-            Long likeId = likesAsRowSet.getLong("user_id");
-            likes.add(likeId);
-        }
-
-        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_BY_ID_SQL, id);
-        Film film = null;
-        if (filmAsRowSet.next()) {
-            film = Film.builder()
-                    .id(filmAsRowSet.getLong("film_id"))
-                    .name(filmAsRowSet.getString("name"))
-                    .description(filmAsRowSet.getString("description"))
-                    .mpaRating(mpaRatingDao.findById(filmAsRowSet.getLong("mpa_id")))
-                    .releaseDate(filmAsRowSet.getDate("release_date").toLocalDate())
-                    .duration(ofSeconds(filmAsRowSet.getLong("duration")))
-                    .likes(likes)
-                    .build();
-        }
-
-        return ofNullable(film);
+        return of(jdbcTemplate.queryForRowSet(FIND_BY_ID_SQL, id))
+                .filter(SqlRowSet::next)
+                .map(this::buildFilm);
     }
 
     @Override
     public List<Film> findAll() {
-        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL);
-        List<Film> films = new ArrayList<>();
-        while (filmAsRowSet.next()) {
-            Film film = Film.builder()
-                    .id(filmAsRowSet.getLong("film_id"))
-                    .name(filmAsRowSet.getString("name"))
-                    .description(filmAsRowSet.getString("description"))
-                    .mpaRating(mpaRatingDao.findById(filmAsRowSet.getLong("mpa_id")))
-                    .releaseDate(filmAsRowSet.getDate("release_date").toLocalDate())
-                    .duration(ofSeconds(filmAsRowSet.getLong("duration")))
-                    .build();
+//        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL);
+//        List<Film> films = new ArrayList<>();
+//        while (filmAsRowSet.next()) {
+//            Film film = buildFilm(filmAsRowSet);
+//            films.add(film);
+//        }
+//        return films;
+        return of(jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL))
+                .filter(SqlRowSet::next)
+                .map(this::buildFilm)
+                .stream()
+                .collect(Collectors.toList());
+    }
 
-            SqlRowSet likesAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_LIKES_SQL, film.getId());
-            Set<Long> likes = new HashSet<>();
-            while (likesAsRowSet.next()) {
-                Long likeId = likesAsRowSet.getLong("user_id");
-                likes.add(likeId);
-            }
-            film.setLikes(likes);
-            films.add(film);
-        }
-        return films;
+    @Override
+    public List<Film> findPopularFilmsByLikes(int count) {
+//        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count);
+//        List<Film> films = new ArrayList<>();
+//        while (filmAsRowSet.next()) {
+//            Film film = buildFilm(filmAsRowSet);
+//            films.add(film);
+//        }
+//        return films;
+        return of(jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count))
+                .filter(SqlRowSet::next)
+                .map(this::buildFilm)
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -155,5 +148,35 @@ public class FilmDao implements AbstractRepository<Long, Film> {
     @Override
     public boolean delete(Long id) {
         return jdbcTemplate.update(DELETE_SQL, id) > 0;
+    }
+
+    @Override
+    public boolean insertLike(Long userId, Long filmId) {
+        return jdbcTemplate.update(INSERT_LIKE_INTO_FILM_SQL, userId, filmId) > 0;
+    }
+
+    @Override
+    public boolean deleteLike(Long userId, Long filmId) {
+        return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, userId, filmId) > 0;
+    }
+
+    private Film buildFilm(SqlRowSet filmAsRowSet) {
+        Film film = Film.builder()
+                .id(filmAsRowSet.getLong("film_id"))
+                .name(filmAsRowSet.getString("name"))
+                .description(filmAsRowSet.getString("description"))
+                .mpaRating(mpaRatingDao.findById(filmAsRowSet.getLong("mpa_id")))
+                .releaseDate(filmAsRowSet.getDate("release_date").toLocalDate())
+                .duration(ofSeconds(filmAsRowSet.getLong("duration")))
+                .build();
+
+        SqlRowSet likesAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_LIKES_SQL, film.getId());
+        Set<Long> likes = new HashSet<>();
+        while (likesAsRowSet.next()) {
+            Long likeId = likesAsRowSet.getLong("user_id");
+            likes.add(likeId);
+        }
+        film.setLikes(likes);
+        return film;
     }
 }
