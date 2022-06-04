@@ -36,6 +36,9 @@ public class FriendController {
         } catch (UnsupportedOperationException e) {
             log.warn("user with id {} was trying add himself in friends", id);
             throw new ResponseStatusException(BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            log.warn("user with id {} already friend with user with id {}", id, friendId);
+            throw new ResponseStatusException(BAD_REQUEST);
         }
     }
 
