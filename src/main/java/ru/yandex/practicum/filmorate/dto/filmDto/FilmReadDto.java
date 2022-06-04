@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dto.filmDto;
 
 import lombok.Value;
+import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public class FilmReadDto {
     String description;
     LocalDate releaseDate;
     Duration duration;
-    Long mpaId;
+    MpaRating mpa;
     Set<Long> likes;
 
 }
