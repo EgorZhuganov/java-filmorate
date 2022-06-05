@@ -79,7 +79,7 @@ public class FilmDao implements FilmRepository {
             PreparedStatement stmt = connection.prepareStatement(INSERT_SQL, new String[]{"film_id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+            stmt.setObject(3, LocalDate.of(film.getReleaseDate().getYear(), film.getReleaseDate().getMonth(), film.getReleaseDate().getDayOfMonth()));
             stmt.setObject(4, film.getDuration());
             stmt.setLong(5, film.getMpaRating().getId());
             return stmt;
