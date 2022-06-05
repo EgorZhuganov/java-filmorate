@@ -114,13 +114,8 @@ public class FilmService {
     //If we have two films with the same count likes, then sorting will be by ID, first - film with bigger id
     public List<FilmReadDto> findPopularFilmsByLikes(int count) {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
-        Comparator<Film> comparator = comparingLong(film -> film.getLikes().size());
-        comparator = comparator.thenComparing(Film::getId).reversed();
-
-        return repository.findAll()
+        return repository.findPopularFilmsByLikes(count)
                 .stream()
-                .sorted(comparator)
-                .limit(count)
                 .map(filmReadMapper::mapFrom)
                 .collect(toList());
     }
