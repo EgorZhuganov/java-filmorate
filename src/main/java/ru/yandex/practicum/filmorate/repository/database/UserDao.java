@@ -23,7 +23,7 @@ public class UserDao implements AbstractRepository<Long, User> {
     private final FriendDao friendDao;
     private static final String DELETE_SQL = """
             DELETE FROM users
-            WHERE  user_id = ?
+            WHERE  user_id = ?;
             """;
     private static final String INSERT_SQL = """
             INSERT INTO users (email, login, name, birthday)
@@ -31,9 +31,9 @@ public class UserDao implements AbstractRepository<Long, User> {
             """;
     private static final String UPDATE_SQL = """
             UPDATE users
-            SET name = ?,
-                email = ?,
+            SET email = ?,
                 login = ?,
+                name = ?,
                 birthday = ?
             WHERE user_id = ?;
             """;
@@ -72,9 +72,9 @@ public class UserDao implements AbstractRepository<Long, User> {
     @Override
     public User update(User user) {
         jdbcTemplate.update(UPDATE_SQL,
-                user.getName(),
                 user.getEmail(),
                 user.getLogin(),
+                user.getName(),
                 user.getBirthday(),
                 user.getId()
         );
