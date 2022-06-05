@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static java.time.Duration.ofSeconds;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.of;
 
 @Component
 @RequiredArgsConstructor
@@ -98,34 +98,24 @@ public class FilmDao implements FilmRepository {
 
     @Override
     public List<Film> findAll() {
-//        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL);
-//        List<Film> films = new ArrayList<>();
-//        while (filmAsRowSet.next()) {
-//            Film film = buildFilm(filmAsRowSet);
-//            films.add(film);
-//        }
-//        return films;
-        return of(jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL))
-                .filter(SqlRowSet::next)
-                .map(this::buildFilm)
-                .stream()
-                .collect(Collectors.toList());
+        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_ALL_FILMS_SQL);
+        List<Film> films = new ArrayList<>();
+        while (filmAsRowSet.next()) {
+            Film film = buildFilm(filmAsRowSet);
+            films.add(film);
+        }
+        return films;
     }
 
     @Override
     public List<Film> findPopularFilmsByLikes(int count) {
-//        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count);
-//        List<Film> films = new ArrayList<>();
-//        while (filmAsRowSet.next()) {
-//            Film film = buildFilm(filmAsRowSet);
-//            films.add(film);
-//        }
-//        return films;
-        return of(jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count))
-                .filter(SqlRowSet::next)
-                .map(this::buildFilm)
-                .stream()
-                .collect(Collectors.toList());
+        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count);
+        List<Film> films = new ArrayList<>();
+        while (filmAsRowSet.next()) {
+            Film film = buildFilm(filmAsRowSet);
+            films.add(film);
+        }
+        return films;
     }
 
     @Override
@@ -139,7 +129,6 @@ public class FilmDao implements FilmRepository {
                 film.getMpaRating().getId(),
                 film.getId()
         );
-
         return film;
     }
 
