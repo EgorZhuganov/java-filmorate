@@ -12,14 +12,13 @@ import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmReadMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmUpdateMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repository.AbstractRepository;
+import ru.yandex.practicum.filmorate.repository.database.FilmRepository;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
-import static java.util.Comparator.*;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toMap;
@@ -29,17 +28,16 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 public class FilmService {
 
-    private final AbstractRepository<Long, Film> repository;
+    private final FilmRepository repository;
     private final Map<String, FilmMapper<?, ?>> mapper;
     private final UserService userService;
 
     @Autowired
-    public FilmService(AbstractRepository<Long, Film> repository, List<FilmMapper<?, ?>> mappers, UserService userService) {
+    public FilmService(FilmRepository repository, List<FilmMapper<?, ?>> mappers, UserService userService) {
         this.repository = repository;
         this.mapper = mappers.stream().collect(toMap(FilmMapper::getKey, Function.identity()));
         this.userService = userService;
     }
-
 
     public List<FilmReadDto> findAll() {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
@@ -54,7 +52,7 @@ public class FilmService {
         return repository.findById(id).map(filmReadMapper::mapFrom);
     }
 
-    public FilmReadDto create(@Valid FilmCreateDto filmCreateDto) throws ConstraintViolationException {
+    public FilmReadDto create(@Valid FilmCreateDto filmCreateDto) {
         var filmCreateMapper = (FilmCreateMapper) mapper.get(FilmCreateMapper.class.getName());
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         return of(filmCreateDto)
