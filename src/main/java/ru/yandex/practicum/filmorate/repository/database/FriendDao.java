@@ -24,7 +24,13 @@ public class FriendDao {
             """;
     private static final String DELETE_ALL_FRIEND_FROM_USER_SQL = """
             DELETE FROM user_friend
-            WHERE user_id ?;
+            WHERE user_id = ?;
+            """;
+    public static final String DELETE_USER_FROM_ALL_FRIENDS = """
+            DELETE FROM user_friend
+            WHERE user_id IN (SELECT user_id
+                              FROM user_friend
+                              WHERE FRIEND_ID = ?);
             """;
     private static final String FIND_ALL_FRIENDS_BY_ID_SQL = """
             SELECT user_id
@@ -43,8 +49,9 @@ public class FriendDao {
         return jdbcTemplate.update(DELETE_FRIEND_SQL, userId, friendId) > 0;
     }
 
-    public void deleteAllFriends(Long id) {
-        jdbcTemplate.update(DELETE_ALL_FRIEND_FROM_USER_SQL, id);
+    public boolean deleteAllFriends(Long id) {
+        jdbcTemplate.update(DELETE_USER_FROM_ALL_FRIENDS, id);
+        return jdbcTemplate.update(DELETE_ALL_FRIEND_FROM_USER_SQL, id) > 0;
     }
 
 
