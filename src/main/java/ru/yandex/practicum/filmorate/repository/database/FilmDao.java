@@ -63,13 +63,18 @@ public class FilmDao implements FilmRepository {
             DELETE FROM likes
             WHERE film_id = ? and user_id = ?;
             """;
-    public static final String FIND_N_POPULAR_FILMS_BY_LIKES = """
+    public static final String FIND_N_POPULAR_FILMS_BY_LIKES_SQL = """
             SELECT f.film_id, name, description, release_date, duration, mpa_id
             FROM film f
                      LEFT JOIN likes l on f.film_id = l.film_id
             GROUP BY f.film_id
             ORDER BY count(l.user_id) desc, f.film_id desc
             LIMIT ?;
+            """;
+    private static final String FIND_LIKE_SQL = """
+            SELECT id
+            FROM likes
+            WHERE film_id = ? and user_id = ?;
             """;
 
     @Override
@@ -109,7 +114,7 @@ public class FilmDao implements FilmRepository {
 
     @Override
     public List<Film> findPopularFilmsByLikes(int count) {
-        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES, count);
+        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_N_POPULAR_FILMS_BY_LIKES_SQL, count);
         List<Film> films = new ArrayList<>();
         while (filmAsRowSet.next()) {
             Film film = buildFilm(filmAsRowSet);
@@ -145,6 +150,11 @@ public class FilmDao implements FilmRepository {
     @Override
     public boolean deleteLike(Long filmId, Long userId) {
         return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, filmId, userId) > 0;
+    }
+
+    @Override
+    public boolean findLike(Long filmId, Long userId) {
+        return jdbcTemplate.queryForRowSet(FIND_LIKE_SQL, filmId, userId).next();
     }
 
     private Film buildFilm(SqlRowSet filmAsRowSet) {

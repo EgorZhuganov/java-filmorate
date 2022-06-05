@@ -13,4 +13,6 @@ public interface FilmRepository extends AbstractRepository<Long, Film> {
 
     boolean deleteLike(Long filmId, Long userId);
 
+    boolean findLike(Long filmId, Long userId);
+
 }
