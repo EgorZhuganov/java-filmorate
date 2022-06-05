@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.beans.factory.annotation.Qualifier;
+import ru.yandex.practicum.filmorate.annotation.IntegrationTest;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserUpdateDto;
@@ -16,13 +16,15 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@IntegrationTest
 class UserServiceTest {
 
     @Autowired
     private UserService userService;
     @Autowired
+    private FriendService friendService;
+    @Autowired
+    @Qualifier("userDao")
     private AbstractRepository<Long, User> repository;
 
     private UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
@@ -71,7 +73,6 @@ class UserServiceTest {
         userService.delete(userReadDto.getId());
 
         assertEquals(Optional.empty(), repository.findById(userReadDto.getId()));
-        assertEquals(0, repository.findAll().size());
     }
 
     @Test
@@ -110,10 +111,9 @@ class UserServiceTest {
                 "MyDisplayName2", LocalDate.of(1998, 12, 12));
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
-        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
 
         assertEquals(1, userService.findById(userReadDto1.getId()).get().getFriends().size());
-        assertEquals(1, userService.findById(userReadDto2.getId()).get().getFriends().size());
 
         userService.delete(userReadDto2.getId());
 

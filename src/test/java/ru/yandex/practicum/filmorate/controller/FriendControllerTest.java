@@ -7,11 +7,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
+import ru.yandex.practicum.filmorate.service.FriendService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.net.URI;
@@ -23,6 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Transactional
+@AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 class FriendControllerTest {
 
@@ -33,6 +38,8 @@ class FriendControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private UserService userService;
+    @Autowired
+    private FriendService friendService;
     private final URI userUrl = URI.create("http://localhost:8080/users/");
     private static final Long WRONG_ID = 100500L;
     private final UserCreateDto userCreateDto1 = new UserCreateDto("ya1@mail.ru", "login1",
@@ -93,7 +100,7 @@ class FriendControllerTest {
     void test5findAllFriendsShouldReturnStatusCode200AndListFriends() throws Exception {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
-        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
 
         String listUserFriends = mockMvc
                 .perform(get(URI.create(userUrl.toString() + userReadDto1.getId() + "/friends")))
@@ -130,10 +137,10 @@ class FriendControllerTest {
         UserReadDto userReadDto3 = userService.create(userCreateDto3);
         UserReadDto userReadDto4 = userService.create(userCreateDto4);
 
-        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
-        userService.addToFriends(userReadDto1.getId(), userReadDto4.getId());
-        userService.addToFriends(userReadDto2.getId(), userReadDto3.getId());
-        userService.addToFriends(userReadDto2.getId(), userReadDto4.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto4.getId());
+        friendService.addToFriends(userReadDto2.getId(), userReadDto3.getId());
+        friendService.addToFriends(userReadDto2.getId(), userReadDto4.getId());
 
         String commonListUsersAsJson = mockMvc
                 .perform(get(URI.create(userUrl.toString() + userReadDto1.getId() + "/friends/common/" + userReadDto2.getId())))
@@ -168,7 +175,7 @@ class FriendControllerTest {
     void test8removeFriendIfUserHasOneFriendShouldRemoveFriendAndReturnStatusCode200() throws Exception {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
-        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
 
         String userReadDto1AsJson = mockMvc
                 .perform(delete(URI.create(userUrl.toString() + userReadDto1.getId() + "/friends/" + userReadDto2.getId())))
@@ -190,7 +197,7 @@ class FriendControllerTest {
     void test9removeFriendIfUserOrFriendNotExistShouldReturnStatusCode404() throws Exception {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
-        userService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
+        friendService.addToFriends(userReadDto1.getId(), userReadDto2.getId());
 
         mockMvc
                 .perform(delete(URI.create(userUrl.toString() + userReadDto1.getId() + "/friends/" + WRONG_ID)))

@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.dto.filmDto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.annotation.IntegrationTest;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.ConstraintViolationException;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@IntegrationTest
 class FilmUpdateDtoTest {
 
     @Autowired
@@ -20,7 +20,7 @@ class FilmUpdateDtoTest {
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов...",
-            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldUpdateFilm() {
@@ -29,7 +29,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
 
         FilmReadDto filmReadDto2 = service.update(filmReadDto1.getId(), filmUpdateDto1).get();
@@ -48,7 +48,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
@@ -60,7 +60,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(null, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
@@ -74,7 +74,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
@@ -86,7 +86,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "      ", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
@@ -101,7 +101,7 @@ class FilmUpdateDtoTest {
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
                 "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
@@ -114,7 +114,7 @@ class FilmUpdateDtoTest {
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов, бывший Старгородский предводитель дворянства и " +
                 "светский лев, а ныне — скромный делопроизводитель ЗАГСа, узнает от умирающей тещи...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
@@ -128,7 +128,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
+                LocalDate.of(1895, 12, 27), Duration.ofMinutes(161), 1L);
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
@@ -140,11 +140,11 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1895, 12, 27), Duration.ofMinutes(161));
+                LocalDate.of(1895, 12, 27), Duration.ofMinutes(161), 1L);
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
-
-        assertTrue(ex.getMessage().endsWith("дата должна быть позже чем \"1895-12-27\""));
+        System.out.println(ex.getMessage());
+        assertTrue(ex.getMessage().endsWith("дата должна быть позже чем \"1895-12-28\" вы ввели 1895-12-27"));
     }
 
     @Test
@@ -154,7 +154,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
+                LocalDate.of(1971, 6, 21), Duration.ofSeconds(0), 1L);
 
         assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
     }
@@ -166,7 +166,7 @@ class FilmUpdateDtoTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofSeconds(0));
+                LocalDate.of(1971, 6, 21), Duration.ofSeconds(0), 1L);
 
         Exception ex = assertThrows(ConstraintViolationException.class, () -> service.update(filmReadDto1.getId(), filmUpdateDto1));
 
