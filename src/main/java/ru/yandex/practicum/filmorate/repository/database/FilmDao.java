@@ -68,7 +68,7 @@ public class FilmDao implements FilmRepository {
             FROM film f
                      LEFT JOIN likes l on f.film_id = l.film_id
             GROUP BY f.film_id
-            ORDER BY count(l.user_id) desc
+            ORDER BY count(l.user_id) desc, f.film_id desc
             LIMIT ?;
             """;
 
