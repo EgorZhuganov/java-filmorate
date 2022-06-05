@@ -103,7 +103,7 @@ public class FilmService {
         if (maybeUser.isPresent() && maybeFilm.isPresent()) {
             Film film = maybeFilm.get();
             film.getLikes().remove(userId);
-            repository.update(film);
+            repository.deleteLike(filmId, userId);
             filmReadDto = filmReadMapper.mapFrom(film);
         }
         return ofNullable(filmReadDto);
