@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repository.database.abstraction;
+package ru.yandex.practicum.filmorate.repository.database;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.AbstractRepository;
