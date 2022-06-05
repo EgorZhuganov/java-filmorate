@@ -77,13 +77,18 @@ public class FilmController {
         }
     }
 
-    @PutMapping("/{filmId}/like/{userId}") //200 OK orElseThrow NOT_FOUND
+    @PutMapping("/{filmId}/like/{userId}")
     @ResponseStatus(OK)
     public FilmReadDto addLike(@PathVariable Long filmId, @PathVariable Long userId) {
-        return filmService.addLike(filmId, userId).orElseThrow(() -> {
-            log.warn("film with id: {} or user with id: {} not found for add like", filmId, userId);
-            return new ResponseStatusException(NOT_FOUND);
-        });
+        try {
+            return filmService.addLike(filmId, userId).orElseThrow(() -> {
+                log.warn("film with id: {} or user with id: {} not found for add like", filmId, userId);
+                return new ResponseStatusException(NOT_FOUND);
+            });
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+            throw new ResponseStatusException(BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{filmId}/like/{userId}") //204 NO_CONTENT orElseThrow NOT_FOUND

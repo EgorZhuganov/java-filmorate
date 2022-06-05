@@ -82,6 +82,10 @@ public class FilmService {
     }
 
     public Optional<FilmReadDto> addLike(Long filmId, Long userId) {
+        if (repository.findLike(filmId, userId)) {
+            log.warn("like from user id {} to film id {}", userId, filmId);
+            throw new IllegalArgumentException("like already exist");
+        }
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         var maybeFilm = repository.findById(filmId);
         var maybeUser = userService.findById(userId);
