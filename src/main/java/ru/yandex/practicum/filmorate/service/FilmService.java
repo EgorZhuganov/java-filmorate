@@ -89,7 +89,7 @@ public class FilmService {
         if (maybeUser.isPresent() && maybeFilm.isPresent()) {
             Film film = maybeFilm.get();
             film.getLikes().add(userId);
-            repository.update(film);
+            repository.insertLike(filmId, userId);
             filmReadDto = filmReadMapper.mapFrom(film);
         }
         return ofNullable(filmReadDto);
