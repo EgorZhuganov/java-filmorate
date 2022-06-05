@@ -7,15 +7,13 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repository.database.abstraction.FilmRepository;
 
 import java.sql.*;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.time.Duration.ofSeconds;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 @Component
 @RequiredArgsConstructor
@@ -58,12 +56,12 @@ public class FilmDao implements FilmRepository {
             FROM film;
             """;
     private static final String INSERT_LIKE_INTO_FILM_SQL = """
-            INSERT INTO likes (user_id, film_id)
+            INSERT INTO likes (film_id, user_id)
             VALUES (?, ?);
             """;
     public static final String DELETE_LIKE_FROM_FILM_SQL = """
             DELETE FROM likes
-            WHERE user_id = ? and film_id = ?;
+            WHERE film_id = ? and user_id = ?;
             """;
     public static final String FIND_N_POPULAR_FILMS_BY_LIKES = """
             SELECT f.film_id, name, description, release_date, duration, mpa_id
@@ -151,13 +149,13 @@ public class FilmDao implements FilmRepository {
     }
 
     @Override
-    public boolean insertLike(Long userId, Long filmId) {
-        return jdbcTemplate.update(INSERT_LIKE_INTO_FILM_SQL, userId, filmId) > 0;
+    public boolean insertLike(Long filmId, Long userId) {
+        return jdbcTemplate.update(INSERT_LIKE_INTO_FILM_SQL, filmId, userId) > 0;
     }
 
     @Override
-    public boolean deleteLike(Long userId, Long filmId) {
-        return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, userId, filmId) > 0;
+    public boolean deleteLike(Long filmId, Long userId) {
+        return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, filmId, userId) > 0;
     }
 
     private Film buildFilm(SqlRowSet filmAsRowSet) {
