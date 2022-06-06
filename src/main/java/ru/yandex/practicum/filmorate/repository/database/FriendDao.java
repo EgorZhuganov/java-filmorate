@@ -14,11 +14,31 @@ public class FriendDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String ADD_FRIEND_SQL = "INSERT INTO user_friend (user_id, friend_id) VALUES (?, ?);";
-    private static final String DELETE_FRIEND_SQL = "DELETE FROM user_friend WHERE (USER_ID, FRIEND_ID) = (?, ?);";
-    private static final String DELETE_ALL_FRIEND_FROM_USER_SQL = "DELETE FROM user_friend WHERE user_id = ?;";
-    public static final String DELETE_USER_FROM_ALL_FRIENDS = "DELETE FROM user_friend WHERE user_id IN (SELECT user_id FROM user_friend WHERE FRIEND_ID = ?);";
-    private static final String FIND_ALL_FRIENDS_BY_ID_SQL = "SELECT user_id FROM users WHERE user_id IN (SELECT uf.friend_id FROM user_friend uf WHERE user_id = ?);";
+    private static final String ADD_FRIEND_SQL = """
+            INSERT INTO user_friend (user_id, friend_id)
+            VALUES (?, ?);
+            """;
+    private static final String DELETE_FRIEND_SQL = """
+            DELETE FROM user_friend
+            WHERE (USER_ID, FRIEND_ID) = (?, ?);
+            """;
+    private static final String DELETE_ALL_FRIEND_FROM_USER_SQL = """
+            DELETE FROM user_friend
+            WHERE user_id = ?;
+            """;
+    public static final String DELETE_USER_FROM_ALL_FRIENDS = """
+            DELETE FROM user_friend
+            WHERE user_id IN (SELECT user_id
+                              FROM user_friend
+                              WHERE FRIEND_ID = ?);
+            """;
+    private static final String FIND_ALL_FRIENDS_BY_ID_SQL = """
+            SELECT user_id
+            FROM users
+            WHERE user_id IN (SELECT uf.friend_id
+                             FROM user_friend uf
+                             WHERE user_id = ?);
+            """;
 
     public boolean insert(Long userId, Long friendId) {
         var insertRow = jdbcTemplate.update(ADD_FRIEND_SQL, userId, friendId);

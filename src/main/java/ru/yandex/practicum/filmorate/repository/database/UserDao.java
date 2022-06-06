@@ -21,11 +21,32 @@ public class UserDao implements AbstractRepository<Long, User> {
 
     private final JdbcTemplate jdbcTemplate;
     private final FriendDao friendDao;
-    private static final String DELETE_SQL = "DELETE FROM users WHERE  user_id = ?;";
-    private static final String INSERT_SQL = "INSERT INTO users (email, login, name, birthday) VALUES (?,?,?,?);";
-    private static final String UPDATE_SQL = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?;";
-    private static final String FIND_BY_ID_SQL = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id = ?;";
-    private static final String FIND_ALL_USERS_SQL = "SELECT user_id, email, login, name, birthday FROM users;";
+
+    private static final String DELETE_SQL = """
+            DELETE FROM users
+            WHERE  user_id = ?;
+            """;
+    private static final String INSERT_SQL = """
+            INSERT INTO users (email, login, name, birthday)
+            VALUES (?,?,?,?);
+            """;
+    private static final String UPDATE_SQL = """
+            UPDATE users
+            SET email = ?,
+                login = ?,
+                name = ?,
+                birthday = ?
+            WHERE user_id = ?;
+            """;
+    private static final String FIND_BY_ID_SQL = """
+            SELECT user_id, email, login, name, birthday
+            FROM users
+            WHERE user_id = ?;
+            """;
+    private static final String FIND_ALL_USERS_SQL = """
+            SELECT user_id, email, login, name, birthday
+            FROM users;
+            """;
 
     @Override
     public User insert(User user) {
