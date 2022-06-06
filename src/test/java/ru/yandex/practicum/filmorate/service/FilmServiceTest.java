@@ -145,20 +145,6 @@ class FilmServiceTest {
     }
 
     @Test
-    void test8addLikeIfAddLikeTwiceByOneUserShouldReturnFilmWithOneLike() {
-        UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
-                "MyDisplayName1", LocalDate.of(1998, 12, 12));
-
-        UserReadDto userReadDto1 = userService.create(userCreateDto1);
-        FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
-
-        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
-        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
-
-        assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
-    }
-
-    @Test
     void test9addLikeIfUserNotExistShouldReturnEmptyOptionalAndFilmWithoutLikes() {
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 

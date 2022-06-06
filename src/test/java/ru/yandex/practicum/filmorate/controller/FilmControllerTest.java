@@ -21,11 +21,11 @@ import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.net.URI;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.Duration.ofMinutes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -50,11 +50,10 @@ class FilmControllerTest {
     private static final Long WRONG_ID = 100500L;
     private FilmCreateDto filmCreateDto1 = FilmCreateDto.builder()
             .name("12 ст-в")
-            .description("""
-            Во время  ******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности 
-            как можно надежнее. И вот Ипполит ******** Воробьянинов, ********...""")
+            .description("Во время  ******* * *********** ** *** ******* периода военного коммунизма многие " +
+                    "прятали свои ценности как можно надежнее. И вот Ипполит ******** Воробьянинов, ********...")
             .releaseDate(LocalDate.of(1971, 6, 21))
-            .duration(Duration.ofMinutes(161))
+            .duration(ofMinutes(161))
             .mpaId(1L)
             .build();
     private final UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
@@ -160,7 +159,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
+                LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
 
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -179,7 +178,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(WRONG_ID, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L); //user with wrong id
+                LocalDate.of(1971, 6, 21), ofMinutes(161), 1L); //user with wrong id
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -222,7 +221,7 @@ class FilmControllerTest {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(999, 6, 21), Duration.ofMinutes(0), 1L);
+                LocalDate.of(999, 6, 21), ofMinutes(0), 1L);
 
         String filmAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -250,7 +249,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(999, 6, 21), Duration.ofMinutes(0), 1L);
+                LocalDate.of(999, 6, 21), ofMinutes(0), 1L);
         String filmUpdateAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -435,7 +434,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
+                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
             filmService.create(filmCreateDto1);
         }
 
@@ -460,7 +459,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
+                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
             filmService.create(filmCreateDto1);
         }
 
