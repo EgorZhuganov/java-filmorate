@@ -12,11 +12,7 @@ public class MpaRatingDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String FIND_MPA_BY_ID = """
-            SELECT mpa_id, name
-            FROM mpa
-            WHERE mpa_id = ?;
-            """;
+    private static final String FIND_MPA_BY_ID = "SELECT mpa_id, name FROM mpa WHERE mpa_id = ?;";
 
     public MpaRating findById(Long mpaId) {
         SqlRowSet mpaRatingAsRowSet = jdbcTemplate.queryForRowSet(FIND_MPA_BY_ID, mpaId);
