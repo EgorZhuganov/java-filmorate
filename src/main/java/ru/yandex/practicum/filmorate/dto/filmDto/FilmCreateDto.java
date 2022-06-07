@@ -32,6 +32,5 @@ public class FilmCreateDto {
     Duration duration;
     @NotNull @BetweenNumber(min = 1, max = 5)
     Long mpaId;
-//    @NotEmpty
     List<Long> genresIds;
 }

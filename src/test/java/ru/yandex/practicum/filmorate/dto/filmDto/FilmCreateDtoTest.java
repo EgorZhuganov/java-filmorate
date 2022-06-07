@@ -118,15 +118,4 @@ class FilmCreateDtoTest {
 
         assertDoesNotThrow(() -> service.create(filmCreateDto1));
     }
-//
-//    @Test
-//    void test10ifGenresIdsIsEmpty() {
-//
-//        FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 стульев", "Во время " +
-//                "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
-//                "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-//                LocalDate.of(1971, 6, 21), ofMinutes(15), 2L, of());
-//
-//        assertThrows(ConstraintViolationException.class, () -> service.create(filmCreateDto1));
-//    }
 }
