@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,5 +19,6 @@ public class Film implements BaseModel<Long> {
     private Duration duration;
     private MpaRating mpaRating;
     private Set<Long> likes;
+    private List<Genre> genres;
 
 }
