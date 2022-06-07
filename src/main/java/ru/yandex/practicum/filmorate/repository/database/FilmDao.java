@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -21,6 +22,8 @@ public class FilmDao implements FilmRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final MpaRatingDao mpaRatingDao;
+    private final GenreDao genreDao;
+    private final FilmGenreDao filmGenreDao;
 
     private static final String DELETE_SQL = """
             DELETE FROM film
@@ -89,8 +92,12 @@ public class FilmDao implements FilmRepository {
             stmt.setLong(5, film.getMpaRating().getId());
             return stmt;
         }, keyHolder);
-
         film.setId(keyHolder.getKey().longValue());
+
+        film.getGenres().stream()
+                .map(Genre::getId)
+                .forEach(id -> filmGenreDao.insert(film.getId(), id));
+
         return film;
     }
 
@@ -139,6 +146,7 @@ public class FilmDao implements FilmRepository {
 
     @Override
     public boolean delete(Long id) {
+        filmGenreDao.deleteFilmId(id);
         return jdbcTemplate.update(DELETE_SQL, id) > 0;
     }
 
@@ -174,6 +182,7 @@ public class FilmDao implements FilmRepository {
             likes.add(likeId);
         }
         film.setLikes(likes);
+        film.setGenres(genreDao.findGenresByFilmId(film.getId()));
         return film;
     }
 }
