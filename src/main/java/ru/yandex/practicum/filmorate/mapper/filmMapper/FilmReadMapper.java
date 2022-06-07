@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import static java.util.Set.copyOf;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class FilmReadMapper implements FilmMapper<Film, FilmReadDto> {
@@ -17,7 +18,8 @@ public class FilmReadMapper implements FilmMapper<Film, FilmReadDto> {
                 object.getReleaseDate(),
                 object.getDuration(),
                 object.getMpaRating(),
-                copyOf(object.getLikes())
+                Set.copyOf(object.getLikes()),
+                List.copyOf(object.getGenres())
         );
     }
 
