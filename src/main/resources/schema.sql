@@ -6,7 +6,7 @@ create table if not exists mpa
 
 create table if not exists genre
 (
-    genre_id integer auto_increment primary key,
+    genre_id bigint primary key,
     name     varchar(30) not null
 );
 
@@ -50,7 +50,7 @@ create table if not exists likes
 create table if not exists film_genre
 (
     id       bigint auto_increment primary key,
-    film_id  bigint references film (film_id)     not null,
-    genre_id smallint references genre (genre_id) not null,
+    film_id  bigint references film (film_id)   not null,
+    genre_id bigint references genre (genre_id) not null,
     UNIQUE (film_id, genre_id)
 );
