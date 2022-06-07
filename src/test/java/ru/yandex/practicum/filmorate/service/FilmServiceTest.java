@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.beans.factory.annotation.Qualifier;
+import ru.yandex.practicum.filmorate.annotation.IntegrationTest;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
@@ -17,16 +17,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.List.of;
 import static java.util.Optional.empty;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@IntegrationTest
 class FilmServiceTest {
 
     @Autowired
     private FilmService filmService;
     @Autowired
+    @Qualifier("filmDao")
     private AbstractRepository<Long, Film> repository;
     @Autowired
     private UserService userService;
@@ -34,7 +36,7 @@ class FilmServiceTest {
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L, of(1L, 2L));
 
     @Test
     void test1createOneFilmShouldReturnFromRepositoryOneFilm() {
@@ -63,7 +65,7 @@ class FilmServiceTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161));
+                LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
 
         filmService.update(filmReadDto1.getId(), filmUpdateDto1);
         Film film = repository.findById(filmReadDto1.getId()).get();
@@ -102,11 +104,11 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("12 ст-в", "Анатолий Ефремович " +
                 "Новосельцев, рядовой служащий одного статистического управления, — человек робкий и застенчивый. " +
                 "Для него неплохо бы получить вакантное место зав. отделом, но...",
-                LocalDate.of(1977, 10, 26), Duration.ofMinutes(151));
+                LocalDate.of(1977, 10, 26), Duration.ofMinutes(151), 1L, of(1L, 2L));
         FilmCreateDto filmCreateDto3 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         filmService.create(filmCreateDto1);
         filmService.create(filmCreateDto2);
@@ -131,7 +133,7 @@ class FilmServiceTest {
     }
 
     @Test
-    void test8addLikeIfAddLikeTwiceByOneUserShouldReturnFilmWithOneLike() {
+    void test8addLikeIfAddLikeTwiceByOneUserShouldThrowIllegalArgumentException() {
         UserCreateDto userCreateDto1 = new UserCreateDto("some@mail.ru", "login1",
                 "MyDisplayName1", LocalDate.of(1998, 12, 12));
 
@@ -139,9 +141,8 @@ class FilmServiceTest {
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
         filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
-        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
-        assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
+        assertThatThrownBy(() -> filmService.addLike(filmReadDto1.getId(), userReadDto1.getId())).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -189,7 +190,7 @@ class FilmServiceTest {
 
         filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
         filmService.addLike(filmReadDto1.getId(), userReadDto2.getId());
-        var filmReadDto = filmService.removeLike(userReadDto1.getId(), filmReadDto1.getId());
+        var filmReadDto = filmService.removeLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
         assertEquals(1, filmReadDto.get().getLikes().size());
@@ -203,7 +204,7 @@ class FilmServiceTest {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(Optional.empty(), filmService.removeLike(filmReadDto1.getId(), 100500L));
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
@@ -217,7 +218,7 @@ class FilmServiceTest {
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         assertEquals(Optional.empty(), filmService.removeLike(100500L, userReadDto1.getId()));
         assertEquals(1, filmService.findById(filmReadDto1.getId()).get().getLikes().size());
@@ -234,13 +235,13 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
         FilmReadDto filmReadDto2 = filmService.create(filmCreateDto2);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         List<FilmReadDto> filmReadDtoList = filmService.findPopularFilmsByLikes(10);
 
@@ -260,13 +261,13 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
         FilmReadDto filmReadDto2 = filmService.create(filmCreateDto2);
 
-        filmService.addLike(userReadDto1.getId(), filmReadDto1.getId());
+        filmService.addLike(filmReadDto1.getId(), userReadDto1.getId());
 
         List<FilmReadDto> filmReadDtoList = filmService.findPopularFilmsByLikes(1);
 
@@ -283,7 +284,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
         FilmReadDto filmReadDto2 = filmService.create(filmCreateDto2);
@@ -307,7 +308,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100));
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);

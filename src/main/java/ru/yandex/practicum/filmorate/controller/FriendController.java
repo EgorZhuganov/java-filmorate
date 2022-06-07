@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.FriendService;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class FriendController {
 
-    private final UserService service;
+    private final FriendService service;
 
     @Autowired
-    public FriendController(UserService service) {
+    public FriendController(FriendService service) {
         this.service = service;
     }
 
@@ -35,6 +35,9 @@ public class FriendController {
                     );
         } catch (UnsupportedOperationException e) {
             log.warn("user with id {} was trying add himself in friends", id);
+            throw new ResponseStatusException(BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            log.warn("user with id {} already friend with user with id {}", id, friendId);
             throw new ResponseStatusException(BAD_REQUEST);
         }
     }

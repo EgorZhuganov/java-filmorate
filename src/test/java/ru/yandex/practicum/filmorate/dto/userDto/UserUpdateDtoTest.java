@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.dto.userDto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.annotation.IntegrationTest;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.ConstraintViolationException;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+@IntegrationTest
 class UserUpdateDtoTest {
 
     @Autowired
