@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +25,7 @@ class FilmReadMapperTest {
             .releaseDate(LocalDate.of(1971, 6, 21))
             .duration(Duration.ofMinutes(161))
             .likes(new HashSet<>())
+            .genres(new ArrayList<>())
             .build();
 
     @Test

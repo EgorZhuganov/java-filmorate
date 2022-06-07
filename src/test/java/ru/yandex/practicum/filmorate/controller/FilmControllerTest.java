@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.Duration.ofMinutes;
+import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,6 +56,7 @@ class FilmControllerTest {
             .releaseDate(LocalDate.of(1971, 6, 21))
             .duration(ofMinutes(161))
             .mpaId(1L)
+            .genresIds(of(1L, 2L))
             .build();
     private final UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
             "MyDisplayName", LocalDate.of(1998, 12, 12));
@@ -221,7 +223,7 @@ class FilmControllerTest {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(999, 6, 21), ofMinutes(0), 1L);
+                LocalDate.of(999, 6, 21), ofMinutes(0), 1L, of(1L, 2L));
 
         String filmAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -434,7 +436,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
+                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
             filmService.create(filmCreateDto1);
         }
 
@@ -459,7 +461,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
+                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
             filmService.create(filmCreateDto1);
         }
 

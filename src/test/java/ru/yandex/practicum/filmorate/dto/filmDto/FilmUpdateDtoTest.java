@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolationException;
 import java.time.Duration;
 import java.time.LocalDate;
 
+import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.*;
 
 @IntegrationTest
@@ -20,7 +21,7 @@ class FilmUpdateDtoTest {
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов...",
-            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
+            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L, of(2L, 3L));
 
     @Test
     void test0ifAllFieldsAreCorrectedShouldUpdateFilm() {

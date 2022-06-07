@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.List.of;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ class FilmServiceTest {
     private final FilmCreateDto filmCreateDto1 = new FilmCreateDto("12 ст-в", "Во время " +
             "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
             "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L);
+            LocalDate.of(1971, 6, 21), Duration.ofMinutes(161), 1L, of(1L, 2L));
 
     @Test
     void test1createOneFilmShouldReturnFromRepositoryOneFilm() {
@@ -103,11 +104,11 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("12 ст-в", "Анатолий Ефремович " +
                 "Новосельцев, рядовой служащий одного статистического управления, — человек робкий и застенчивый. " +
                 "Для него неплохо бы получить вакантное место зав. отделом, но...",
-                LocalDate.of(1977, 10, 26), Duration.ofMinutes(151), 1L);
+                LocalDate.of(1977, 10, 26), Duration.ofMinutes(151), 1L, of(1L, 2L));
         FilmCreateDto filmCreateDto3 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L);
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         filmService.create(filmCreateDto1);
         filmService.create(filmCreateDto2);
@@ -234,7 +235,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L);
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
@@ -260,7 +261,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L);
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
@@ -283,7 +284,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L);
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         FilmReadDto filmReadDto1 = filmService.create(filmCreateDto1);
         FilmReadDto filmReadDto2 = filmService.create(filmCreateDto2);
@@ -307,7 +308,7 @@ class FilmServiceTest {
         FilmCreateDto filmCreateDto2 = new FilmCreateDto("Бриллиантовая рука", "Кинороман из " +
                 "жизни контрабандистов с прологом и эпилогом. В южном городке орудует шайка «валютчиков», " +
                 "возглавляемая Шефом и его помощником Графом...",
-                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L);
+                LocalDate.of(1969, 4, 28), Duration.ofMinutes(100), 1L, of(1L, 2L));
 
         UserReadDto userReadDto1 = userService.create(userCreateDto1);
         UserReadDto userReadDto2 = userService.create(userCreateDto2);
