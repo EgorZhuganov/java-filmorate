@@ -5,8 +5,6 @@ import ru.yandex.practicum.filmorate.validation.annotation.BetweenNumber;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import static java.lang.Long.parseLong;
-
 public class BetweenNumberValidation implements ConstraintValidator<BetweenNumber, Long> {
 
     private long minInterval;
