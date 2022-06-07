@@ -6,12 +6,10 @@ import org.hibernate.validator.constraints.time.DurationMin;
 import ru.yandex.practicum.filmorate.validation.annotation.BetweenNumber;
 import ru.yandex.practicum.filmorate.validation.annotation.IsAfter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -32,7 +30,8 @@ public class FilmCreateDto {
     LocalDate releaseDate;
     @DurationMin(minutes = 1)
     Duration duration;
-    @NotNull @BetweenNumber(min =  1, max = 5)
+    @NotNull @BetweenNumber(min = 1, max = 5)
     Long mpaId;
-
+    @NotEmpty
+    List<Long> genresIds;
 }
