@@ -123,7 +123,7 @@ public class FilmService {
                 .collect(toList());
     }
 
-    public List<FilmReadDto> getCommonFilms(Long userId, Long friendId) {
+    public List<FilmReadDto> findCommonFilmsSortedByLikesDesc(Long userId, Long friendId) {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         Optional<UserReadDto> user = userService.findById(userId);
         Optional<UserReadDto> friend = userService.findById(friendId);

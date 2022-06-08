@@ -111,8 +111,8 @@ public class FilmController {
     //common?userId={userId}&friendId={friendId}
     @GetMapping("/common")
     @ResponseStatus(OK)
-    public List<FilmReadDto> getCommonFilms(@RequestParam Long userId,
-                                            @RequestParam Long friendId) {
-        return filmService.getCommonFilms(userId, friendId);
+    public List<FilmReadDto> findCommonFilmsSortedByLikesDesc(@RequestParam Long userId,
+                                                              @RequestParam Long friendId) {
+        return filmService.findCommonFilmsSortedByLikesDesc(userId, friendId);
     }
 }
