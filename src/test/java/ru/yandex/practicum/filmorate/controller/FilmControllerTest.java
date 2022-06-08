@@ -19,13 +19,17 @@ import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserCreateDto;
 import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.net.URI.create;
 import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
+import static java.time.LocalDate.of;
 import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -35,17 +39,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 @IntegrationTest
+@AutoConfigureMockMvc
 class FilmControllerTest {
 
-    FilmControllerTest() throws JsonProcessingException {
+    private FilmControllerTest() throws JsonProcessingException {
     }
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private FilmService filmService;
+    @Autowired
+    private UserService userService;
     private final URI filmUrl = URI.create("http://localhost:8080/films");
     private final URI userUrl = URI.create("http://localhost:8080/users");
     private static final Long WRONG_ID = 100500L;
@@ -53,13 +58,13 @@ class FilmControllerTest {
             .name("12 ст-в")
             .description("Во время  ******* * *********** ** *** ******* периода военного коммунизма многие " +
                     "прятали свои ценности как можно надежнее. И вот Ипполит ******** Воробьянинов, ********...")
-            .releaseDate(LocalDate.of(1971, 6, 21))
+            .releaseDate(of(1971, 6, 21))
             .duration(ofMinutes(161))
             .mpaId(1L)
             .genresIds(of(1L, 2L))
             .build();
     private final UserCreateDto userCreateDto1 = new UserCreateDto("ya@mail.ru", "login",
-            "MyDisplayName", LocalDate.of(1998, 12, 12));
+            "MyDisplayName", of(1998, 12, 12));
     private final String filmAsJson = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -120,7 +125,6 @@ class FilmControllerTest {
                 .andExpect(content().string(filmsListAsJson));
     }
 
-
     @Test
     void test4findByIdIfRepositoryHasOneFilmWithThisIdShouldReturnFilmAndStatusCode200() throws Exception {
         MvcResult mvcResult = mockMvc
@@ -161,7 +165,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), ofMinutes(161), 1L);
+                of(1971, 6, 21), ofMinutes(161), 1L);
 
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -180,7 +184,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(WRONG_ID, "12 стульев", "Во время " +
                 "революции и последовавшего за ней краткого периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит Матвеевич Воробьянинов...",
-                LocalDate.of(1971, 6, 21), ofMinutes(161), 1L); //user with wrong id
+                of(1971, 6, 21), ofMinutes(161), 1L); //user with wrong id
         String filmUpdateDto1AsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -223,7 +227,7 @@ class FilmControllerTest {
         FilmCreateDto filmCreateDto1 = new FilmCreateDto(null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(999, 6, 21), ofMinutes(0), 1L, of(1L, 2L));
+                of(999, 6, 21), ofMinutes(0), 1L, of(1L, 2L));
 
         String filmAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -251,7 +255,7 @@ class FilmControllerTest {
         FilmUpdateDto filmUpdateDto1 = new FilmUpdateDto(filmReadDto1.getId(), null, "Во время " +
                 "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                 "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                LocalDate.of(999, 6, 21), ofMinutes(0), 1L);
+                of(999, 6, 21), ofMinutes(0), 1L);
         String filmUpdateAsJson = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -436,7 +440,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
+                    of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
             filmService.create(filmCreateDto1);
         }
 
@@ -461,7 +465,7 @@ class FilmControllerTest {
             filmCreateDto1 = new FilmCreateDto("12 ст-в" + " версия " + i, "Во время " +
                     "******* * *********** ** *** ******* периода военного коммунизма многие прятали свои ценности как " +
                     "можно надежнее. И вот Ипполит ******** Воробьянинов, ********...",
-                    LocalDate.of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
+                    of(1971, 6, 21), ofMinutes(161), 1L, of(1L, 2L));
             filmService.create(filmCreateDto1);
         }
 
@@ -477,5 +481,29 @@ class FilmControllerTest {
                 });
 
         assertEquals(5, filmReadDtoList.size());
+    }
+
+    @Test
+    void test22getCommonFilms() throws Exception {
+        List<FilmReadDto> filmList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            filmList.add(filmService.create(FilmCreateDto.builder()
+                    .name("Film" + i)
+                    .description("Descr" + i)
+                    .releaseDate(of(2021, 12, 2))
+                    .duration(ofSeconds(1500))
+                    .mpaId(1L)
+                    .build()));
+        }
+        UserReadDto user1 = userService.create(new UserCreateDto("email1@mail.ru", "login1", "name1", of(2001, 1, 1)));
+        UserReadDto user2 = userService.create(new UserCreateDto("email2@mail.ru", "login2", "name2", of(2002, 1, 1)));
+
+        filmService.addLike(filmList.get(0).getId(), user1.getId());
+        filmService.addLike(filmList.get(0).getId(), user2.getId());
+
+        mockMvc.perform(get(create(filmUrl + "/common?" + "userId=" + user1.getId() + "&" + "friendId=" + user2.getId()))
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
