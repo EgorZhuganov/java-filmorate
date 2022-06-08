@@ -29,7 +29,7 @@ public class FilmCreateMapper implements FilmMapper<FilmCreateDto, Film> {
                 .build();
 
         if (object.getGenresIds() != null && !object.getGenresIds().isEmpty()) {
-            genreDao.findGenres(new HashSet<>(object.getGenresIds()));
+            film.setGenres(genreDao.findGenres(new HashSet<>(object.getGenresIds())));
         }
 
         return film;
