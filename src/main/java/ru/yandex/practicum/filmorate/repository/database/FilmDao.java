@@ -160,6 +160,16 @@ public class FilmDao implements FilmRepository {
     }
 
     @Override
+    public List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long friendId) {
+        var filmsAsRowSet = jdbcTemplate.queryForRowSet(SQL_SELECT_COMMON_FILMS_IDS_BETWEEN_TWO_USERS, userId, friendId);
+        List<Film> films = new ArrayList<>();
+        while (filmsAsRowSet.next()) {
+            findById(filmsAsRowSet.getLong("film_id")).ifPresent(films::add);
+        }
+        return films;
+    }
+
+    @Override
     public boolean insertLike(Long filmId, Long userId) {
         return jdbcTemplate.update(INSERT_LIKE_INTO_FILM_SQL, filmId, userId) > 0;
     }
