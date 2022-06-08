@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmCreateDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmReadDto;
 import ru.yandex.practicum.filmorate.dto.filmDto.FilmUpdateDto;
+import ru.yandex.practicum.filmorate.dto.userDto.UserReadDto;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmCreateMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.filmMapper.FilmReadMapper;
@@ -120,5 +121,20 @@ public class FilmService {
                 .stream()
                 .map(filmReadMapper::mapFrom)
                 .collect(toList());
+    }
+
+    public List<FilmReadDto> getCommonFilms(Long userId, Long friendId) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        Optional<UserReadDto> user = userService.findById(userId);
+        Optional<UserReadDto> friend = userService.findById(friendId);
+        if (user.isPresent() && friend.isPresent()) {
+            return repository
+                    .findCommonFilmsBetweenTwoUsers(userId, friendId)
+                    .stream()
+                    .map(filmReadMapper::mapFrom)
+                    .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
+                    .collect(toList());
+        }
+        return new ArrayList<>();
     }
 }
