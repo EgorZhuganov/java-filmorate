@@ -10,10 +10,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.*;
 
 import static java.time.Duration.ofSeconds;
+import static java.time.LocalDate.of;
 import static java.util.Optional.of;
 
 @Component
@@ -25,6 +25,15 @@ public class FilmDao implements FilmRepository {
     private final GenreDao genreDao;
     private final FilmGenreDao filmGenreDao;
 
+    private static final String SQL_SELECT_COMMON_FILMS_IDS_BETWEEN_TWO_USERS = """
+            SELECT film_id
+            FROM likes
+            WHERE user_id = ?
+            INTERSECT
+            SELECT film_id
+            FROM likes
+            WHERE user_id = ?;
+            """;
     private static final String DELETE_SQL = """
             DELETE FROM film
             WHERE  film_id = ?
@@ -87,7 +96,7 @@ public class FilmDao implements FilmRepository {
             PreparedStatement stmt = connection.prepareStatement(INSERT_SQL, new String[]{"film_id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            stmt.setObject(3, LocalDate.of(film.getReleaseDate().getYear(), film.getReleaseDate().getMonth(), film.getReleaseDate().getDayOfMonth()));
+            stmt.setObject(3, of(film.getReleaseDate().getYear(), film.getReleaseDate().getMonth(), film.getReleaseDate().getDayOfMonth()));
             stmt.setObject(4, film.getDuration());
             stmt.setLong(5, film.getMpaRating().getId());
             return stmt;
