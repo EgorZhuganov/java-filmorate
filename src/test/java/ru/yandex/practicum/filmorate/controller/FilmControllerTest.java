@@ -484,7 +484,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void test22getCommonFilms() throws Exception {
+    void test22findCommonFilmsSortedByLikesDescShouldReturnStatusAsOk() throws Exception {
         List<FilmReadDto> filmList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             filmList.add(filmService.create(FilmCreateDto.builder()

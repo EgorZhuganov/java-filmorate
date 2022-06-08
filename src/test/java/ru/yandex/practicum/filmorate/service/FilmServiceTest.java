@@ -336,7 +336,7 @@ class FilmServiceTest {
     }
 
     @Test
-    void test19getCommonFilmsIf2CommonFilmsExistingShouldReturn2FilmsFromList() {
+    void test19findCommonFilmsSortedByLikesDescIf2CommonFilmsExistingShouldReturn2FilmsFromList() {
         List<FilmReadDto> filmList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             filmList.add(filmService.create(FilmCreateDto.builder()
@@ -360,11 +360,11 @@ class FilmServiceTest {
         filmService.addLike(filmList.get(2).getId(), user1.getId());
         filmService.addLike(filmList.get(3).getId(), user2.getId());
 
-        assertThat(filmService.getCommonFilms(user1.getId(), user2.getId())).hasSize(2);
+        assertThat(filmService.findCommonFilmsSortedByLikesDesc(user1.getId(), user2.getId())).hasSize(2);
     }
 
     @Test
-    void test20getCommonFilmsIfCommonFilmsNotExistingShouldReturn0FilmsFromList() {
+    void test20findCommonFilmsSortedByLikesDescIfCommonFilmsNotExistingShouldReturn0FilmsFromList() {
         List<FilmReadDto> filmList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             filmList.add(filmService.create(FilmCreateDto.builder()
@@ -382,6 +382,6 @@ class FilmServiceTest {
         filmService.addLike(filmList.get(0).getId(), user1.getId());
         filmService.addLike(filmList.get(0).getId(), user2.getId());
 
-        assertThat(filmService.getCommonFilms(user2.getId(), user3.getId())).hasSize(0);
+        assertThat(filmService.findCommonFilmsSortedByLikesDesc(user2.getId(), user3.getId())).hasSize(0);
     }
 }
