@@ -65,24 +65,6 @@ public class UserDao implements AbstractRepository<Long, User> {
     }
 
     @Override
-    public boolean delete(Long id) {
-        friendDao.deleteAllFriends(id);
-        return jdbcTemplate.update(DELETE_SQL, id) > 0;
-    }
-
-    @Override
-    public User update(User user) {
-        jdbcTemplate.update(UPDATE_SQL,
-                user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                user.getBirthday(),
-                user.getId()
-        );
-        return user;
-    }
-
-    @Override
     public Optional<User> findById(Long id) {
         SqlRowSet userAsRowSet = jdbcTemplate.queryForRowSet(FIND_BY_ID_SQL, id);
         User user = null;
@@ -117,5 +99,23 @@ public class UserDao implements AbstractRepository<Long, User> {
             usersList.add(user);
         }
         return usersList;
+    }
+
+    @Override
+    public User update(User user) {
+        jdbcTemplate.update(UPDATE_SQL,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId()
+        );
+        return user;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        friendDao.deleteAllFriends(id);
+        return jdbcTemplate.update(DELETE_SQL, id) > 0;
     }
 }
