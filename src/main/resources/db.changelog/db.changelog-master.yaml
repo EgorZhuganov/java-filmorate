@@ -1,3 +1,0 @@
-databaseChangeLog:
-  - includeAll:
-      path: db/changelog/db.changelog-1.0.sql
