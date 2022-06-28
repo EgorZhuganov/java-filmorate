@@ -175,13 +175,13 @@ public class FilmDao implements FilmRepository {
     }
 
     @Override
-    public boolean deleteLike(Long filmId, Long userId) {
-        return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, filmId, userId) > 0;
+    public boolean findLike(Long filmId, Long userId) {
+        return jdbcTemplate.queryForRowSet(FIND_LIKE_SQL, filmId, userId).next();
     }
 
     @Override
-    public boolean findLike(Long filmId, Long userId) {
-        return jdbcTemplate.queryForRowSet(FIND_LIKE_SQL, filmId, userId).next();
+    public boolean deleteLike(Long filmId, Long userId) {
+        return jdbcTemplate.update(DELETE_LIKE_FROM_FILM_SQL, filmId, userId) > 0;
     }
 
     private Film buildFilm(SqlRowSet filmAsRowSet) {
