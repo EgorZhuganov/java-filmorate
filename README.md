@@ -45,6 +45,8 @@
 - Maven
 - Spring (SpringBoot, SprintTest, SpringValidation)
 - JUnit 5
+- Liquibase
+- PostgreSQL
 
 ## Отношение
 
