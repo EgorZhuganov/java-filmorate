@@ -140,6 +140,16 @@ public class FilmDao implements FilmRepository {
     }
 
     @Override
+    public List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long friendId) {
+        var filmsIdsAsRowSet = jdbcTemplate.queryForRowSet(FIND_COMMON_FILMS_IDS_BETWEEN_TWO_USERS_SQL, userId, friendId);
+        List<Film> films = new ArrayList<>();
+        while (filmsIdsAsRowSet.next()) {
+            findById(filmsIdsAsRowSet.getLong("film_id")).ifPresent(films::add);
+        }
+        return films;
+    }
+
+    @Override
     public Film update(Film film) {
         jdbcTemplate.update(
                 UPDATE_SQL,
@@ -157,16 +167,6 @@ public class FilmDao implements FilmRepository {
     public boolean delete(Long id) {
         filmGenreDao.deleteFilmId(id);
         return jdbcTemplate.update(DELETE_SQL, id) > 0;
-    }
-
-    @Override
-    public List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long friendId) {
-        var filmsAsRowSet = jdbcTemplate.queryForRowSet(SQL_SELECT_COMMON_FILMS_IDS_BETWEEN_TWO_USERS, userId, friendId);
-        List<Film> films = new ArrayList<>();
-        while (filmsAsRowSet.next()) {
-            findById(filmsAsRowSet.getLong("film_id")).ifPresent(films::add);
-        }
-        return films;
     }
 
     @Override
