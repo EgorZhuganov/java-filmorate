@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/filmorate_repository?currentSchema=filmorate
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false #don't open transactions in view layer
+  mvc:
+    format:
+      date: iso
+
+logging:
+  level:
+    root: info
+    jpa: info
+    transactional: trace
