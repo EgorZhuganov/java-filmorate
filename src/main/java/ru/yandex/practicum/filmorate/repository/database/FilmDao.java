@@ -25,7 +25,7 @@ public class FilmDao implements FilmRepository {
     private final GenreDao genreDao;
     private final FilmGenreDao filmGenreDao;
 
-    private static final String SQL_SELECT_COMMON_FILMS_IDS_BETWEEN_TWO_USERS = """
+    private static final String FIND_COMMON_FILMS_IDS_BETWEEN_TWO_USERS_SQL = """
             SELECT film_id
             FROM likes
             WHERE user_id = ?
