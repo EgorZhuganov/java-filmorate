@@ -89,6 +89,14 @@ public class FilmDao implements FilmRepository {
             WHERE film_id = ? and user_id = ?;
             """;
 
+    private static final String FIND_FILMS_THAT_USER_LIKES_SQL = """
+                    SELECT film_id, name, description, release_date, duration, mpa_id
+                    FROM film
+                    WHERE  film_id IN (SELECT film_id
+                                       FROM likes
+                                       WHERE user_id = ?);
+                    """;
+
     @Override
     public Film insert(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -145,6 +153,17 @@ public class FilmDao implements FilmRepository {
         List<Film> films = new ArrayList<>();
         while (filmsIdsAsRowSet.next()) {
             findById(filmsIdsAsRowSet.getLong("film_id")).ifPresent(films::add);
+        }
+        return films;
+    }
+
+    @Override
+    public List<Film> findFilmsThatUserLikes(Long userId) {
+        SqlRowSet filmAsRowSet = jdbcTemplate.queryForRowSet(FIND_FILMS_THAT_USER_LIKES_SQL, userId);
+        List<Film> films = new ArrayList<>();
+        while (filmAsRowSet.next()) {
+            Film film = buildFilm(filmAsRowSet);
+            films.add(film);
         }
         return films;
     }

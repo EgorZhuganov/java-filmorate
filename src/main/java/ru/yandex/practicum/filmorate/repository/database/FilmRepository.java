@@ -16,4 +16,6 @@ public interface FilmRepository extends AbstractRepository<Long, Film> {
     boolean findLike(Long filmId, Long userId);
 
     List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long friendId);
+
+    List<Film> findFilmsThatUserLikes(Long userId);
 }

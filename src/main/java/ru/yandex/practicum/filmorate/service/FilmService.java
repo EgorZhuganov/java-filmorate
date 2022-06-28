@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toMap;
@@ -136,5 +137,33 @@ public class FilmService {
                     .collect(toList());
         }
         return new ArrayList<>();
+    }
+
+    public List<FilmReadDto> findRecommendedFilms(Long userId) {
+        var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
+        if (userService.findById(userId).isEmpty()) {
+            log.warn("user with id {} not exist", userId);
+            throw new IllegalArgumentException(format("User with id %d not exist", userId));
+        }
+        List<Film> filmsFirstUser = repository.findFilmsThatUserLikes(userId);
+        int countMatches = 0;
+        List<Film> filmsOtherUser = new ArrayList<>();
+        List<UserReadDto> users = userService.findAll();
+        for (UserReadDto userReadDto : users) {
+            if (userReadDto.getId().equals(userId)) {
+                continue;
+            }
+            List<Film> films = repository.findFilmsThatUserLikes(userReadDto.getId());
+            int currentCountMatches = films.stream().filter(filmsFirstUser::contains).toList().size();
+            if(currentCountMatches > countMatches)  {
+                countMatches = currentCountMatches;
+                filmsOtherUser = films;
+            }
+        }
+
+        return filmsOtherUser.stream()
+                .filter(film -> !filmsFirstUser.contains(film))
+                .map(filmReadMapper::mapFrom)
+                .toList();
     }
 }
