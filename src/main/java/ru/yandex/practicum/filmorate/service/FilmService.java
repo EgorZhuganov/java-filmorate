@@ -124,13 +124,13 @@ public class FilmService {
                 .collect(toList());
     }
 
-    public List<FilmReadDto> findCommonFilmsSortedByLikesDesc(Long userId, Long friendId) {
+    public List<FilmReadDto> findCommonFilmsSortedByLikesDesc(Long userId, Long otherUserId) {
         var filmReadMapper = (FilmReadMapper) mapper.get(FilmReadMapper.class.getName());
         Optional<UserReadDto> user = userService.findById(userId);
-        Optional<UserReadDto> friend = userService.findById(friendId);
+        Optional<UserReadDto> friend = userService.findById(otherUserId);
         if (user.isPresent() && friend.isPresent()) {
             return repository
-                    .findCommonFilmsBetweenTwoUsers(userId, friendId)
+                    .findCommonFilmsBetweenTwoUsers(userId, otherUserId)
                     .stream()
                     .map(filmReadMapper::mapFrom)
                     .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())

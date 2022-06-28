@@ -108,11 +108,11 @@ public class FilmController {
         return filmService.findPopularFilmsByLikes(count);
     }
 
-    //common?userId={userId}&friendId={friendId}
+    //common?userId={userId}&otherUserId={otherUserId}
     @GetMapping("/common")
     @ResponseStatus(OK)
     public List<FilmReadDto> findCommonFilmsSortedByLikesDesc(@RequestParam Long userId,
-                                                              @RequestParam Long friendId) {
-        return filmService.findCommonFilmsSortedByLikesDesc(userId, friendId);
+                                                              @RequestParam Long otherUserId) {
+        return filmService.findCommonFilmsSortedByLikesDesc(userId, otherUserId);
     }
 }

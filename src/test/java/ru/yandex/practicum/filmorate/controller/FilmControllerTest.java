@@ -501,7 +501,7 @@ class FilmControllerTest {
         filmService.addLike(filmList.get(0).getId(), user1.getId());
         filmService.addLike(filmList.get(0).getId(), user2.getId());
 
-        mockMvc.perform(get(create(filmUrl + "/common?" + "userId=" + user1.getId() + "&" + "friendId=" + user2.getId()))
+        mockMvc.perform(get(create(filmUrl + "/common?" + "userId=" + user1.getId() + "&" + "otherUserId=" + user2.getId()))
                         .contentType(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

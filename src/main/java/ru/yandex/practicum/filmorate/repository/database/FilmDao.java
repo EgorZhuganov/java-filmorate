@@ -148,8 +148,8 @@ public class FilmDao implements FilmRepository {
     }
 
     @Override
-    public List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long friendId) {
-        var filmsIdsAsRowSet = jdbcTemplate.queryForRowSet(FIND_COMMON_FILMS_IDS_BETWEEN_TWO_USERS_SQL, userId, friendId);
+    public List<Film> findCommonFilmsBetweenTwoUsers(Long userId, Long otherUserId) {
+        var filmsIdsAsRowSet = jdbcTemplate.queryForRowSet(FIND_COMMON_FILMS_IDS_BETWEEN_TWO_USERS_SQL, userId, otherUserId);
         List<Film> films = new ArrayList<>();
         while (filmsIdsAsRowSet.next()) {
             findById(filmsIdsAsRowSet.getLong("film_id")).ifPresent(films::add);
